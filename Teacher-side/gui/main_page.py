@@ -66,7 +66,35 @@ class MainPage(CTk):
         self.element_frame = CTkFrame(master=self.main_frame, fg_color='transparent')
         self.element_frame.place(relx=0.5, rely=0.5, anchor='center')
         
+        ## Adding Table ##
+        # Creating Treeview (Table)
+        self.table = ttk.Treeview(
+            master=self.element_frame,
+            columns=("Name", "face1", "face2", "face3", "Accuracy rate", "Desktop"),
+            show='headings',
+            height=15
+        )
 
+        # Defining Columns
+        for col in ("Name", "face1", "face2", "face3", "Accuracy rate", "Desktop"):
+            self.table.heading(col, text=col, anchor=CENTER)
+            if col == 'Name' or col == 'Accuracy rate' or col == 'Desktop' :
+                self.table.column(col, anchor=CENTER, width=150)
+            else:
+                self.table.column(col, anchor=CENTER, width=50)
+
+
+        # Adding Sample Data
+        for i in range(1, 31):
+            self.table.insert("", "end", values=(f"Row {i} Col 1", f"Row {i} Col 2", f"Row {i} Col 3", f"Row {i} Col 4", f"Row {i} Col 5", f"Row {i} Col 6", f"Row {i} Col 7"))
+
+        # Adding Scrollbar
+        self.scrollbar = ttk.Scrollbar(self.element_frame, orient=VERTICAL, command=self.table.yview)
+        self.table.configure(yscrollcommand=self.scrollbar.set)
+
+        # Placing Table and Scrollbar
+        self.table.grid(row=1, column=0, pady=20)
+        self.scrollbar.grid(row=1, column=0, sticky='nes', pady=20)
 
         # elements 
         self.main_label = CTkLabel(master=self.element_frame, text='Students Status', font=('montserrat', 30, 'bold'))
