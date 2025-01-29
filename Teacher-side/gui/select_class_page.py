@@ -1,4 +1,5 @@
 from customtkinter import CTk, CTkButton, CTkFrame, CTkLabel, CTkOptionMenu
+from main_page import main_page_func
 
 class SelectClassPage(CTk):
     def __init__(self):
@@ -16,7 +17,7 @@ class SelectClassPage(CTk):
         self.element_frame.place(relx=0.5, rely=0.5, anchor='center')
         # elements 
         self.welcome_label = CTkLabel(master=self.element_frame, text='Welcom Mr.x', font=('montserrat', 30, 'bold'))
-        self.select_calss_optionbox = CTkOptionMenu(master=self.element_frame, values=['test1', 'test2', 'test3'], height=40, width=150, font=('montserrat', 20, 'bold'))
+        self.select_calss_optionbox = CTkOptionMenu(master=self.element_frame, values=['hn1-1052', 'test2', 'test3'], height=40, width=150, font=('montserrat', 20, 'bold'))
         self.join_button = CTkButton(master=self.element_frame, text='Join to Class', font=('montserrat', 20, 'bold'), height=30, width=250, border_color='white', border_width=2)
         self.exit_button = CTkButton(master=self.element_frame, text='Exit', font=('montserrat', 20, 'bold'), height=30, width=250, fg_color='red', hover_color='#6B0011', border_color='white', border_width=2, command=lambda: self.destroy())
 
@@ -25,6 +26,12 @@ class SelectClassPage(CTk):
         self.select_calss_optionbox.grid(row=1, column=0, pady=90)
         self.join_button.grid(row=2, column=0)
         self.exit_button.grid(row=3, column=0, pady=(10,0))
+
+    def join_to_class(self):
+        class_id = self.select_calss_optionbox.get()
+        self.destroy()
+        main_page_func(class_id)
+
 
     def run(self):
         self.mainloop()
