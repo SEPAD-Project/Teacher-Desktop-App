@@ -83,10 +83,10 @@ class MainPage(CTk):
         self.mainloop()
 
 
-def main_page_func(classid):
+def main_page_func_teacher(classid):
     app = MainPage(classid)
     app.run()
 
 
 if __name__ == '__main__' : 
-    main_page_func('hn1-1052')
+    main_page_func_teacher('hn1-1052')

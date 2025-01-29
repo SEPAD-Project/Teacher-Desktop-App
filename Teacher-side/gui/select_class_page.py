@@ -1,5 +1,5 @@
 from customtkinter import CTk, CTkButton, CTkFrame, CTkLabel, CTkOptionMenu
-from main_page import main_page_func
+from main_page_teacher import main_page_func_teacher
 
 class SelectClassPage(CTk):
     def __init__(self, udata):
@@ -18,7 +18,7 @@ class SelectClassPage(CTk):
         # elements 
         self.welcome_label = CTkLabel(master=self.element_frame, text=f'Welcom {udata[0]} {udata[1]}', font=('montserrat', 30, 'bold'))
         self.select_calss_optionbox = CTkOptionMenu(master=self.element_frame, values=['hn1-1052', 'test2', 'test3'], height=40, width=150, font=('montserrat', 20, 'bold'))
-        self.join_button = CTkButton(master=self.element_frame, text='Join to Class', font=('montserrat', 20, 'bold'), height=30, width=250, border_color='white', border_width=2)
+        self.join_button = CTkButton(master=self.element_frame, text='Join to Class', font=('montserrat', 20, 'bold'), height=30, width=250, border_color='white', border_width=2, command=self.join_to_class)
         self.exit_button = CTkButton(master=self.element_frame, text='Exit', font=('montserrat', 20, 'bold'), height=30, width=250, fg_color='red', hover_color='#6B0011', border_color='white', border_width=2, command=lambda: self.destroy())
 
         # placing elements in element_frame      
@@ -30,17 +30,17 @@ class SelectClassPage(CTk):
     def join_to_class(self):
         class_id = self.select_calss_optionbox.get()
         self.destroy()
-        main_page_func(class_id)
+        main_page_func_teacher(class_id)
 
 
     def run(self):
         self.mainloop()
 
 
-def select_class_page(udata):
+def select_class_page_func(udata):
     app = SelectClassPage(udata)
     app.run()
 
 
 if __name__ == '__main__' : 
-    select_class_page()
+    select_class_page_func()
