@@ -40,7 +40,7 @@ class MainPage(CTk):
             self.students_list = self.students_list[1]
             for student in self.students_list:
                 item_id = self.table.insert("", "end", values=(student, 'N/A', 'N/A', 'N/A'))
-                self.student_rows[student] = item_id  # ذخیره `item_id`
+                self.student_rows[student] = item_id 
         # Defining Columns
         for col in ("Name", "Last Check & Time", "Accuracy rate", "Desktop"):
             self.table.heading(col, text=col, anchor=CENTER)
@@ -49,10 +49,6 @@ class MainPage(CTk):
             else:
                 self.table.column(col, anchor=CENTER, width=100)
 
-
-        # Adding Sample Data
-        # for i in range(1, 31):
-        #     self.table.insert("", "end", values=(f"Row {i} Col 1", f"Row {i} Col 2", f"Row {i} Col 3", f"Row {i} Col 4", f"Row {i} Col 5", f"Row {i} Col 6", f"Row {i} Col 7"))
 
         # Adding Scrollbar
         self.scrollbar = ttk.Scrollbar(self.element_frame, orient=VERTICAL, command=self.table.yview)
