@@ -2,9 +2,9 @@ from customtkinter import CTk, CTkButton, CTkFrame, CTkLabel, CTkOptionMenu
 from main_page import main_page_func
 
 class SelectClassPage(CTk):
-    def __init__(self):
+    def __init__(self, udata):
         super().__init__()
-
+        self.udata = udata
         self.title("Select Class Page")
         self.geometry('700x500')
         self.minsize(700, 500)
@@ -16,7 +16,7 @@ class SelectClassPage(CTk):
         self.element_frame = CTkFrame(master=self.main_frame, fg_color='transparent')
         self.element_frame.place(relx=0.5, rely=0.5, anchor='center')
         # elements 
-        self.welcome_label = CTkLabel(master=self.element_frame, text='Welcom Mr.x', font=('montserrat', 30, 'bold'))
+        self.welcome_label = CTkLabel(master=self.element_frame, text=f'Welcom {udata[0]} {udata[1]}', font=('montserrat', 30, 'bold'))
         self.select_calss_optionbox = CTkOptionMenu(master=self.element_frame, values=['hn1-1052', 'test2', 'test3'], height=40, width=150, font=('montserrat', 20, 'bold'))
         self.join_button = CTkButton(master=self.element_frame, text='Join to Class', font=('montserrat', 20, 'bold'), height=30, width=250, border_color='white', border_width=2)
         self.exit_button = CTkButton(master=self.element_frame, text='Exit', font=('montserrat', 20, 'bold'), height=30, width=250, fg_color='red', hover_color='#6B0011', border_color='white', border_width=2, command=lambda: self.destroy())
@@ -37,8 +37,8 @@ class SelectClassPage(CTk):
         self.mainloop()
 
 
-def select_class_page():
-    app = SelectClassPage()
+def select_class_page(udata):
+    app = SelectClassPage(udata)
     app.run()
 
 
