@@ -2,7 +2,7 @@ import requests
 import time
 
 # server address
-server_url = "http://localhost:5001"
+server_url = "http://185.4.28.110:5001"
 
 
 # getting students list
