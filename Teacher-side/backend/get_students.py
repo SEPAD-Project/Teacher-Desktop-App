@@ -37,6 +37,6 @@ def fetch_messages(student, school_name, class_code):
     else:
         return [False, 'Error']
         
-fetch_messages('Reza', 'hn1', '1052')
+# fetch_messages('Reza', 'hn1', '1052')
 
 # fetch_messages()
