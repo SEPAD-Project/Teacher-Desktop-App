@@ -15,6 +15,7 @@ class MainPage(CTk):
 
         self.class_id = class_id
         self.student_rows = {}
+        self.students_list = [False, 'NotAssigned']
 
         self.title("Main Page")
         self.geometry('900x600')
@@ -35,12 +36,9 @@ class MainPage(CTk):
             show='headings',
             height=15
         )
-        self.students_list = get_students_list(school_name=str(self.class_id).split('-')[0], class_code=str(self.class_id).split('-')[1])
-        if self.students_list[0] :
-            self.students_list = self.students_list[1]
-            for student in self.students_list:
-                item_id = self.table.insert("", "end", values=(student, 'N/A', 'N/A', 'N/A'))
-                self.student_rows[student] = item_id 
+        Thread(target=self.get_students_list).start()
+
+
         # Defining Columns
         for col in ("Name", "Last Check & Time", "Accuracy rate", "Desktop"):
             self.table.heading(col, text=col, anchor=CENTER)
@@ -66,14 +64,42 @@ class MainPage(CTk):
         self.main_label.grid(row=0, column=0 ,sticky='n')
         self.exit_button.grid(row=2, column=0, pady=(10,0), sticky='we')
 
-        Thread(target=self.update_data, daemon=True).start()
+
+
+    def get_students_list(self):
+        print('trying yo get ...')
+        self.students_list = get_students_list(school_name=str(self.class_id).split('-')[0], class_code=str(self.class_id).split('-')[1])
+        print('i got it')
+        if self.students_list[0]:
+            print('here')
+            Thread(target=self.set_students_int_table, daemon=True).start()
+        else:
+            print(f'--------------------\nERROR IS : \n{self.students_list[1]}\n--------------------')
+            self.after(30000, self.get_students_list)
+
+    def set_students_int_table(self):
+
+        if self.students_list[0] :
+            # self.students_list = self.students_list[1]
+            for student in self.students_list[1]:
+                item_id = self.table.insert("", "end", values=(student, 'N/A', 'N/A', 'N/A'))
+                self.student_rows[student] = item_id 
+                print('im goinh to get message...')
+                Thread(target=self.update_data, daemon=True).start()
+        else:
+            print(f'ERROR : {self.students_list[1]}')
+            self.after(30000, self.set_students_int_table)
 
 
     def update_data(self):
-        for student in self.students_list :
-            respond = fetch_messages(student=student, school_name=str(self.class_id).split('-')[0], class_code=str(self.class_id).split('-')[1])
-            if respond[0] :
-                self.table.item(self.student_rows[student], values=(student, respond[1], "N/A", "N/A"))
+        if self.students_list[0]:
+            for student in self.students_list[1] :
+                print(f'students : {student}\nschool : {str(self.class_id).split('-')[0]}\nclass : {str(self.class_id).split('-')[1]}')
+                respond = fetch_messages(student=student, school_name=str(self.class_id).split('-')[0], class_code=str(self.class_id).split('-')[1])
+                if respond[0] :
+                    self.table.item(self.student_rows[student], values=(student, respond[1], "N/A", "N/A"))
+        else:
+            print('an Error occured while getting studdents list')
         self.after(30000, self.update_data)
 
     def get_last_status(self):
