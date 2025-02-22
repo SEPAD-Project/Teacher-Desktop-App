@@ -8,7 +8,7 @@ server_url = "http://185.4.28.110:5001"
 # getting students list
 def get_students_list(school_name, class_code):
     try:
-        response = requests.post(f"{server_url}/get_students", json={"school_name": school_name, "class_code": class_code})
+        response = requests.post(f"{server_url}/get_students", json={"school_name": school_name, "class_code": class_code}, timeout=3)
 
         if response.status_code != 200:
             return [False, 'no school or class found'] # , response.json().get("error", "Unknown error")
@@ -18,8 +18,10 @@ def get_students_list(school_name, class_code):
                 return [False, 'No Students found']
             else:
                 return [True, students]
-    except Exception:
-        return [False, 'Error']
+    except ConnectionError:
+        return [False, 'ConnetionError']
+    except Exception as e:
+        return [False, e]
 
 # print(get_students_list('hn1', '1052'))
 
