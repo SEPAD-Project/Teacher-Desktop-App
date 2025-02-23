@@ -19,9 +19,11 @@ class SelectClassPage(CTk):
         # elements 
         print(udata[3])
         self.list_from_string = ast.literal_eval(udata[3])
+        # self.translated_list = [f'{str(int(i.split('#')[0], 16))}-{str(chr(i.split('#')[1]))}' for i in self.list_from_string]
+        self.translated_list = [(str(int(code.split('#')[0], 16))+ '-' +(''.join(chr(int(h, 16) ^ ord('crax6ix'[i % len('crax6ix')])) for i, h in enumerate(code.split('#')[1].split('-'))))) for code in self.list_from_string]
         print(type(self.list_from_string))
         self.welcome_label = CTkLabel(master=self.element_frame, text=f'Welcom {udata[0]} {udata[1]}', font=('montserrat', 30, 'bold'))
-        self.select_calss_optionbox = CTkOptionMenu(master=self.element_frame, values=self.list_from_string, height=40, width=150, font=('montserrat', 20, 'bold'))
+        self.select_calss_optionbox = CTkOptionMenu(master=self.element_frame, values=self.translated_list, height=40, width=150, font=('montserrat', 20, 'bold'))
         self.join_button = CTkButton(master=self.element_frame, text='Join to Class', font=('montserrat', 20, 'bold'), height=30, width=250, border_color='white', border_width=2, command=self.join_to_class)
         self.exit_button = CTkButton(master=self.element_frame, text='Exit', font=('montserrat', 20, 'bold'), height=30, width=250, fg_color='red', hover_color='#6B0011', border_color='white', border_width=2, command=lambda: self.destroy())
 
