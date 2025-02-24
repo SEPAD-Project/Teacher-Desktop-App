@@ -11,10 +11,14 @@ sys.path.append(str(parent_dir / "backend"))
 from get_students import get_students_list, fetch_messages
 
 class MainPage(CTk):
-    def __init__(self, class_id):
+    def __init__(self, school_code, school_name, class_name):
         super().__init__()
-
-        self.class_id = class_id
+        self.school_code = school_code
+        self.school_name = school_name
+        self.class_name = class_name
+        print(f'school_code : {school_code}')
+        print(f'school_name : {school_name}')
+        print(f'class_name : {class_name}')
         self.student_rows = {}
         self.students_list = [False, 'NotAssigned']
 
@@ -59,7 +63,7 @@ class MainPage(CTk):
         self.scrollbar.grid(row=1, column=1, sticky='nes', pady=20)
 
         # elements 
-        self.main_label = CTkLabel(master=self.element_frame, text=f'Students Class {self.class_id} Status', font=('montserrat', 30, 'bold'))
+        self.main_label = CTkLabel(master=self.element_frame, text=f'Students Class {school_name}-{class_name} Status', font=('montserrat', 30, 'bold'))
         self.ping_lbl = CTkLabel(master=self.element_frame, text='PING', font=('montserrat', 25, 'bold'))
         self.ping_entry = CTkEntry(master=self.element_frame, height=40, width=130, font=('montserrat', 20, 'bold'), fg_color='#2B2B2B', border_color='#2B2B2B', justify='right')
         self.exit_button = CTkButton(master=self.element_frame, text='Exit', font=('montserrat', 20, 'bold'), height=30, width=250, fg_color='red', hover_color='#6B0011', border_color='white', border_width=2, command=lambda: self.destroy())
@@ -102,7 +106,7 @@ class MainPage(CTk):
 
     def get_students_list(self):
         print('trying yo get ...')
-        self.students_list = get_students_list(school_name=str(self.class_id).split('-')[0], class_code=str(self.class_id).split('-')[1])
+        self.students_list = get_students_list(school_name=self.school_code, class_code=self.class_name)
         print('i got it')
         if self.students_list[0]:
             print('here')
@@ -130,7 +134,7 @@ class MainPage(CTk):
             if self.students_list[0]:
                 for student in self.students_list[1] :
                     print(f'im going to get message of {student}...')
-                    respond = fetch_messages(student=student, school_name=str(self.class_id).split('-')[0], class_code=str(self.class_id).split('-')[1])
+                    respond = fetch_messages(student=student, school_name=self.school_code, class_code=self.class_name)
                     if respond[0] :
                         code, time = str(respond[1]).split('-')[0], str(respond[1]).split('-')[1] 
                         if code == '1':
@@ -159,8 +163,8 @@ class MainPage(CTk):
         self.mainloop()
 
 
-def main_page_func_teacher(classid):
-    app = MainPage(classid)
+def main_page_func_teacher(school_code, school_name, class_name):
+    app = MainPage(school_code, school_name, class_name)
     app.run()
 
 
