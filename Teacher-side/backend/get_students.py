@@ -1,5 +1,5 @@
 import requests
-import time
+
 
 # server address
 server_url = "http://185.4.28.110:5001"
@@ -7,9 +7,17 @@ server_url = "http://185.4.28.110:5001"
 
 # getting students list
 def get_students_list(school_name, class_code):
+    '''
+    Returns the list of students of the desired school name (school code)
+
+    Args:
+        school_name : school code to connect to directory of school
+        class_code : class code to find class name and connect to direcctory of that class
+    '''
     try:
         response = requests.post(f"{server_url}/get_students", json={"school_name": school_name, "class_code": class_code}, timeout=3)
-
+        print(f'this is school path (school name) : {school_name}')
+        print(f'this is class path (class code) : {class_code}')
         if response.status_code != 200:
             return [False, 'no school or class found'] # , response.json().get("error", "Unknown error")
         else:
@@ -22,9 +30,6 @@ def get_students_list(school_name, class_code):
         return [False, 'ConnetionError']
     except Exception as e:
         return [False, e]
-
-# print(get_students_list('hn1', '1052'))
-
 
 # getting students message and show them
 def fetch_messages(student, school_name, class_code):
@@ -39,6 +44,4 @@ def fetch_messages(student, school_name, class_code):
     else:
         return [False, 'Error']
         
-# fetch_messages('Reza', 'hn1', '1052')
 
-# fetch_messages()
