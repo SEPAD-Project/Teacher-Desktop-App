@@ -10,6 +10,12 @@ sys.path.append(str(parent_dir / "backend"))
 
 from get_students import get_students_list, fetch_messages
 
+parent_dir = Path(__file__).resolve().parent.parent.parent
+sys.path.append(str(parent_dir / "database-code"))
+
+from searching import get_students_name_by_national_code
+
+
 class MainPage(CTk):
     def __init__(self, school_code, school_name, class_name):
         super().__init__()
@@ -77,8 +83,6 @@ class MainPage(CTk):
         self.ping_entry.configure(state=DISABLED)
         Thread(target=self.pinging).start()
 
-
-
     def pinging(self):
         try:
             response_time = ping('google.com', unit='ms')
@@ -110,23 +114,28 @@ class MainPage(CTk):
         print('i got it')
         if self.students_list[0]:
             print('here')
-            Thread(target=self.set_students_int_table, daemon=True).start()
+            Thread(target=self.translate_natoinal_code_to_name, daemon=True).start()
         else:
             print(f'--------------------\nERROR IS : \n{self.students_list[1]}\n--------------------')
             self.after(30000, self.get_students_list)
+
+    def translate_natoinal_code_to_name(self):
+        # national_code : name
+        print(self.students_list[1])
+        self.translated_name = {i:get_students_name_by_national_code(i) for i in self.students_list[1]}
+        Thread(target=self.set_students_int_table, daemon=True).start()
 
     def set_students_int_table(self):
 
         if self.students_list[0] :
             # self.students_list = self.students_list[1]
             for student in self.students_list[1]:
-                item_id = self.table.insert("", "end", values=(student, 'N/A', 'N/A', 'N/A'))
+                item_id = self.table.insert("", "end", values=(self.translated_name[student], 'N/A', 'N/A', 'N/A'))
                 self.student_rows[student] = item_id 
             Thread(target=self.update_data, daemon=True).start()
         else:
             print(f'ERROR : {self.students_list[1]}')
             self.after(30000, self.set_students_int_table)
-
 
     def update_data(self):
         def update_data_thread_handler():
@@ -135,29 +144,33 @@ class MainPage(CTk):
                 for student in self.students_list[1] :
                     print(f'im going to get message of {student}...')
                     respond = fetch_messages(student=student, school_name=self.school_code, class_code=self.class_name)
+                    print(f'this is respond : <{respond}>')
                     if respond[0] :
-                        code, time = str(respond[1]).split('-')[0], str(respond[1]).split('-')[1] 
-                        if code == '1':
-                            final_message = f'Students goes-{time}'
-                        elif code == '2' :
-                            final_message = f'Identity not confirmed-{time}'
-                        elif code == '3' :
-                            final_message = f'Sleeping-{time}'
-                        elif code == '4':
-                            final_message = f'Not looking-{time}'
-                        elif code == '5' :
-                            final_message = f'Looking-{time}'
-                        elif code == 'True' : 
-                            final_message = f'Fucking looking-{time}'
-                        
-                        self.table.item(self.student_rows[student], values=(student, final_message, "N/A", "N/A"))
+                        if respond[1] != 'No messages yet':
+                            code, time = str(respond[1]).split('-')[0], str(respond[1]).split('-')[1] 
+                            if code == '1':
+                                final_message = f'Students goes-{time}'
+                            elif code == '2' :
+                                final_message = f'Identity not confirmed-{time}'
+                            elif code == '3' :
+                                final_message = f'Sleeping-{time}'
+                            elif code == '4':
+                                final_message = f'Not looking-{time}'
+                            elif code == '5' :
+                                final_message = f'Looking-{time}'
+                            elif code == 'True' : 
+                                final_message = f'Fucking looking-{time}'
+                            
+                            self.table.item(self.student_rows[student], values=(self.translated_name[student], final_message, "N/A", "N/A"))
+                        else:
+                            self.table.item(self.student_rows[student], values=(self.translated_name[student], 'No messages yet', "N/A", "N/A"))
+
                     else:
                         print('Connection Error while getting last message')
             else:
                 print('an Error occured while getting studdents list')
         Thread(target=update_data_thread_handler).start()
         self.after(30000, self.update_data)
-
 
     def run(self):
         self.mainloop()
