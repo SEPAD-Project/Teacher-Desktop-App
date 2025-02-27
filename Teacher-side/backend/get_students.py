@@ -1,9 +1,7 @@
 import requests
 
-
 # server address
 server_url = "http://185.4.28.110:5001"
-
 
 # getting students list
 def get_students_list(school_name, class_code):
@@ -37,7 +35,7 @@ def fetch_messages(student, school_name, class_code):
             "school_name": school_name,
             "class_code": class_code,
             "student_name": student
-    })
+    }, timeout=3)
     if response.status_code == 200:
         data = response.json()
         return [True, data['message']]
