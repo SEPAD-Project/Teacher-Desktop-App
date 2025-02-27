@@ -65,21 +65,24 @@ class MainPage(CTk):
         self.table.configure(yscrollcommand=self.scrollbar.set)
 
         # Placing Table and Scrollbar
-        self.table.grid(row=1, column=0, pady=20, columnspan=2, sticky='we')
-        self.scrollbar.grid(row=1, column=1, sticky='nes', pady=20)
+        self.table.grid(row=1, column=0, pady=20, columnspan=3, sticky='we')
+        self.scrollbar.grid(row=1, column=2, sticky='nes', pady=20)
 
         # elements 
         self.main_label = CTkLabel(master=self.element_frame, text=f'Students Class {school_name}-{class_name} Status', font=('montserrat', 30, 'bold'))
-        self.ping_lbl = CTkLabel(master=self.element_frame, text='PING', font=('montserrat', 25, 'bold'))
-        self.ping_entry = CTkEntry(master=self.element_frame, height=40, width=130, font=('montserrat', 20, 'bold'), fg_color='#2B2B2B', border_color='#2B2B2B', justify='right')
+        self.ping_lbl_and_check_status = CTkLabel(master=self.element_frame, text='STATUS / PING', font=('montserrat', 20, 'bold'))
+        self.checking_entry = CTkEntry(master=self.element_frame, height=40, width=150, font=('montserrat', 17, 'bold'), border_color='#2B2B2B', justify='right', fg_color='#2B2B2B')
+        self.ping_entry = CTkEntry(master=self.element_frame, height=40, width=100, font=('montserrat', 17, 'bold'), border_color='#2B2B2B', justify='right', fg_color='#2B2B2B')
         self.exit_button = CTkButton(master=self.element_frame, text='Exit', font=('montserrat', 20, 'bold'), height=30, width=250, fg_color='red', hover_color='#6B0011', border_color='white', border_width=2, command=lambda: self.destroy())
 
         # placing elements in element_frame      
-        self.main_label.grid(row=0, column=0 ,sticky='n', columnspan=2)
-        self.exit_button.grid(row=3, column=0, pady=(10,0), sticky='we', columnspan=2)
-        self.ping_lbl.grid(row=2, column=0, sticky='w')
-        self.ping_entry.grid(row=2, column=1, sticky='e')
+        self.main_label.grid(row=0, column=0 ,sticky='n', columnspan=3)
+        self.exit_button.grid(row=3, column=0, pady=(10,0), sticky='we', columnspan=3)
+        self.ping_lbl_and_check_status.grid(row=2, column=0, sticky='w')
+        self.checking_entry.grid(row=2, column=1, sticky='e')
+        self.ping_entry.grid(row=2, column=2, sticky='e')
 
+        self.checking_entry.configure(state=DISABLED)
         self.ping_entry.configure(state=DISABLED)
         Thread(target=self.pinging).start()
 
@@ -109,11 +112,9 @@ class MainPage(CTk):
         self.after(1000, self.pinging)
 
     def get_students_list(self):
-        print('trying yo get ...')
         self.students_list = get_students_list(school_name=self.school_code, class_code=self.class_name)
-        print('i got it')
         if self.students_list[0]:
-            print('here')
+            self.update_entry('GETTING')
             Thread(target=self.translate_natoinal_code_to_name, daemon=True).start()
         else:
             print(f'--------------------\nERROR IS : \n{self.students_list[1]}\n--------------------')
@@ -137,9 +138,17 @@ class MainPage(CTk):
             print(f'ERROR : {self.students_list[1]}')
             self.after(30000, self.set_students_int_table)
 
+    def update_entry(self, txt):
+        self.checking_entry.configure(state='normal')
+        self.checking_entry.delete(0, END)
+        self.checking_entry.insert(0, txt)
+        self.checking_entry.configure(state='disabled')
+
+
     def update_data(self):
         def update_data_thread_handler():
             print('--new round started')
+            self.update_entry('UPDATING')
             if self.students_list[0]:
                 for student in self.students_list[1] :
                     print(f'im going to get message of {student}...')
@@ -167,8 +176,10 @@ class MainPage(CTk):
 
                     else:
                         print('Connection Error while getting last message')
+                        self.update_entry('ERROR')
             else:
                 print('an Error occured while getting studdents list')
+            self.update_entry('STOPPED')
         Thread(target=update_data_thread_handler).start()
         self.after(30000, self.update_data)
 
@@ -182,4 +193,4 @@ def main_page_func_teacher(school_code, school_name, class_name):
 
 
 if __name__ == '__main__' : 
-    main_page_func_teacher('hn1-1052')
+    main_page_func_teacher('123','hn1','1052')
