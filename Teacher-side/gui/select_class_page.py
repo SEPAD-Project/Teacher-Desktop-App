@@ -34,7 +34,7 @@ class SelectClassPage(CTk):
         self.status_label = CTkLabel(master=self.element_frame, text="Initializing...")
         
         self.select_class_optionbox = CTkOptionMenu(master=self.element_frame, 
-                                                  values=[], 
+                                                  values=['processing ...'], 
                                                   height=40, 
                                                   width=350, 
                                                   font=('montserrat', 20, 'bold'),
@@ -49,14 +49,14 @@ class SelectClassPage(CTk):
                                    border_width=2,
                                    command=self.join_to_class)
 
-        self.recheck_button = CTkButton(master=self.element_frame, 
-                                   text='Recheck', 
+        self.Retrying_button = CTkButton(master=self.element_frame, 
+                                   text='Retrying', 
                                    font=('montserrat', 20, 'bold'), 
                                    height=30, 
                                    width=350, 
                                    border_color='white', 
                                    border_width=2,
-                                   command=self.recheck_func)
+                                   command=self.Retrying_func)
         
         self.exit_button = CTkButton(master=self.element_frame, 
                                     text='Exit', 
@@ -75,7 +75,7 @@ class SelectClassPage(CTk):
         self.status_label.grid(row=2, column=0)
         self.select_class_optionbox.grid(row=3, column=0, pady=20)
         self.join_button.grid(row=4, column=0)
-        self.recheck_button.grid(row=5, column=0, pady=20)
+        self.Retrying_button.grid(row=5, column=0, pady=20)
         self.exit_button.grid(row=6, column=0)
 
         # Start background processing
@@ -83,7 +83,7 @@ class SelectClassPage(CTk):
 
     def start_processing(self):
         self.join_button.configure(state=DISABLED,height=30,width=350)
-        self.recheck_button.configure(state=DISABLED,height=30,width=350)
+        self.Retrying_button.configure(state=DISABLED,height=30,width=350)
         self.select_class_optionbox.configure(state=DISABLED)
         self.processing_thread = threading.Thread(target=self.Decryption_and_translate, daemon=True)
         self.processing_thread.start()
@@ -101,27 +101,19 @@ class SelectClassPage(CTk):
             if self.udata[3] != 'empty':
                 self.list_from_string = ast.literal_eval(self.udata[3])
                 self.decrypted_list = [(str(int(code.split('#')[0], 16))+ '-' +(''.join(chr(int(h, 16) ^ ord('crax6ix'[i % len('crax6ix')])) for i, h in enumerate(code.split('#')[1].split('-'))))) for code in self.list_from_string]
-                print('Decryption finished')
-                print(self.decrypted_list)
                 # Stage 2: Translating
                 self.after(0, self.update_progress, 0.6, "Translating class names...")
                 time.sleep(1)  # Simulate processing
-                print('translating started')
                 self.school_name = {i.split('-')[0]:get_class_name(i.split('-')[0]) for i in self.decrypted_list} # code:name
-
-                print('class name getted')
                 self.translated_list = [f"{self.school_name[i.split('-')[0]]}-{i.split('-')[1]}" for i in self.decrypted_list]
-                print('translated list completed')
                 # Final stage
                 self.after(0, self.update_progress, 1.0, "Loading completed!")
                 time.sleep(0.5)
-                print('finall stage is on')
                 self.select_class_optionbox.configure(state=NORMAL)
                 self.select_class_optionbox.configure(values=self.translated_list)
                 self.select_class_optionbox.set(self.translated_list[0])
                 self.join_button.configure(state=NORMAL,height=30,width=350)
-                self.recheck_button.configure(state=NORMAL,height=30,width=350)
-                print('shoud be correct')
+                self.Retrying_button.configure(state=NORMAL,height=30,width=350)
             
             else:
                 self.after(0, self.update_progress, 1.0, "Loading completed!")
@@ -129,15 +121,16 @@ class SelectClassPage(CTk):
                 self.select_class_optionbox.configure(state=NORMAL)
                 self.select_class_optionbox.set('You don’t have any classes')
                 self.select_class_optionbox.configure(state=DISABLED)
-                self.recheck_button.configure(state=NORMAL,height=30,width=350)
+                self.Retrying_button.configure(state=NORMAL,height=30,width=350)
         
         except Exception as e:
             self.progress_bar.configure(progress_color="red")
-            self.status_label.configure(text=f"CONNECTION ERROR OCCURED : CHECK YOUR INTERNET", text_color= 'red')
+            self.after(0, self.update_progress, 1.0, "CONNECTION ERROR OCCURED : CHECK YOUR INTERNET")
+            self.status_label.configure(text="CONNECTION ERROR OCCURED : CHECK YOUR INTERNET", text_color= 'red')
             self.select_class_optionbox.configure(state=NORMAL)
             self.select_class_optionbox.set('ERROR')
             self.select_class_optionbox.configure(state=DISABLED)
-            self.recheck_button.configure(state=NORMAL,height=30,width=350)
+            self.Retrying_button.configure(state=NORMAL,height=30,width=350)
 
     def join_to_class(self):
         class_id = self.select_class_optionbox.get()
@@ -149,13 +142,14 @@ class SelectClassPage(CTk):
                                   class_id.split('-')[0], 
                                   class_id.split('-')[1])
 
-    def recheck_func(self):
+    def Retrying_func(self):
         def thread_handler():
+            self.status_label.configure(text_color= 'white')
             self.progress_bar.configure(progress_color="#1f6aa5")
-            self.recheck_button.configure(state=DISABLED,height=30,width=350)
+            self.Retrying_button.configure(state=DISABLED,height=30,width=350)
             self.join_button.configure(state=DISABLED,height=30,width=350)
             self.select_class_optionbox.configure(state=NORMAL)
-            self.select_class_optionbox.set('Rechecking ...')
+            self.select_class_optionbox.set('Retrying ...')
             self.select_class_optionbox.configure(state=DISABLED)
             self.start_processing()
 
