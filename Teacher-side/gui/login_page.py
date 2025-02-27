@@ -160,7 +160,8 @@ class TeacherSideAppLoginPage(CTk):
     def handle_post_login(self, user_data):
         """Handle post-login operations"""
         try:
-            Thread(target=select_class_page_func, args=(user_data, )).start()
+            select_class_page_func(user_data)
+
         except Exception as e:
             self.show_error("File Error", f"{str(e)}")
             sys.exit(1)
