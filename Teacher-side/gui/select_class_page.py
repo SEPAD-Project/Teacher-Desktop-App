@@ -14,8 +14,8 @@ class SelectClassPage(CTk):
         super().__init__()
         self.udata = udata
         self.title("Select Class Page")
-        self.geometry('700x500')
-        self.minsize(700, 500)
+        self.geometry('650, 550')
+        self.minsize(650, 550)
         
         # Main red frame
         self.main_frame = CTkFrame(master=self, border_color='red', border_width=2)
@@ -38,7 +38,7 @@ class SelectClassPage(CTk):
                                                   height=40, 
                                                   width=350, 
                                                   font=('montserrat', 20, 'bold'),
-                                                  state='disabled')
+                                                  )
         
         self.join_button = CTkButton(master=self.element_frame, 
                                    text='Join to Class', 
@@ -46,9 +46,17 @@ class SelectClassPage(CTk):
                                    height=30, 
                                    width=350, 
                                    border_color='white', 
-                                   border_width=2, 
-                                   state='disabled',
+                                   border_width=2,
                                    command=self.join_to_class)
+
+        self.recheck_button = CTkButton(master=self.element_frame, 
+                                   text='Recheck', 
+                                   font=('montserrat', 20, 'bold'), 
+                                   height=30, 
+                                   width=350, 
+                                   border_color='white', 
+                                   border_width=2,
+                                   command=self.recheck_func)
         
         self.exit_button = CTkButton(master=self.element_frame, 
                                     text='Exit', 
@@ -67,13 +75,17 @@ class SelectClassPage(CTk):
         self.status_label.grid(row=2, column=0)
         self.select_class_optionbox.grid(row=3, column=0, pady=20)
         self.join_button.grid(row=4, column=0)
-        self.exit_button.grid(row=5, column=0, pady=20)
+        self.recheck_button.grid(row=5, column=0, pady=20)
+        self.exit_button.grid(row=6, column=0)
 
         # Start background processing
-        self.start_processing()
+        threading.Thread(target=self.start_processing).start()
 
     def start_processing(self):
-        self.processing_thread = threading.Thread(target=self.decode_and_translate, daemon=True)
+        self.join_button.configure(state=DISABLED,height=30,width=350)
+        self.recheck_button.configure(state=DISABLED,height=30,width=350)
+        self.select_class_optionbox.configure(state=DISABLED)
+        self.processing_thread = threading.Thread(target=self.Decryption_and_translate, daemon=True)
         self.processing_thread.start()
 
     def update_progress(self, value, text):
@@ -81,15 +93,15 @@ class SelectClassPage(CTk):
         self.status_label.configure(text=text)
         self.update_idletasks()
 
-    def decode_and_translate(self):
+    def Decryption_and_translate(self):
         try:
-            # Stage 1: Decoding
-            self.after(0, self.update_progress, 0.3, "Decoding class data...")
+            # Stage 1: Decryption
+            self.after(0, self.update_progress, 0.3, "Decryption class data...")
             time.sleep(1)  # Simulate processing
             if self.udata[3] != 'empty':
                 self.list_from_string = ast.literal_eval(self.udata[3])
                 self.decrypted_list = [(str(int(code.split('#')[0], 16))+ '-' +(''.join(chr(int(h, 16) ^ ord('crax6ix'[i % len('crax6ix')])) for i, h in enumerate(code.split('#')[1].split('-'))))) for code in self.list_from_string]
-                print('decode finished')
+                print('Decryption finished')
                 print(self.decrypted_list)
                 # Stage 2: Translating
                 self.after(0, self.update_progress, 0.6, "Translating class names...")
@@ -108,7 +120,7 @@ class SelectClassPage(CTk):
                 self.select_class_optionbox.configure(values=self.translated_list)
                 self.select_class_optionbox.set(self.translated_list[0])
                 self.join_button.configure(state=NORMAL,height=30,width=350)
-
+                self.recheck_button.configure(state=NORMAL,height=30,width=350)
                 print('shoud be correct')
             
             else:
@@ -117,13 +129,15 @@ class SelectClassPage(CTk):
                 self.select_class_optionbox.configure(state=NORMAL)
                 self.select_class_optionbox.set('You don’t have any classes')
                 self.select_class_optionbox.configure(state=DISABLED)
+                self.recheck_button.configure(state=NORMAL,height=30,width=350)
         
         except Exception as e:
+            self.progress_bar.configure(progress_color="red")
             self.status_label.configure(text=f"CONNECTION ERROR OCCURED : CHECK YOUR INTERNET", text_color= 'red')
             self.select_class_optionbox.configure(state=NORMAL)
             self.select_class_optionbox.set('ERROR')
             self.select_class_optionbox.configure(state=DISABLED)
-
+            self.recheck_button.configure(state=NORMAL,height=30,width=350)
 
     def join_to_class(self):
         class_id = self.select_class_optionbox.get()
@@ -134,6 +148,21 @@ class SelectClassPage(CTk):
             main_page_func_teacher(school_code[0], 
                                   class_id.split('-')[0], 
                                   class_id.split('-')[1])
+
+    def recheck_func(self):
+        def thread_handler():
+            self.progress_bar.configure(progress_color="#1f6aa5")
+            self.recheck_button.configure(state=DISABLED,height=30,width=350)
+            self.join_button.configure(state=DISABLED,height=30,width=350)
+            self.select_class_optionbox.configure(state=NORMAL)
+            self.select_class_optionbox.set('Rechecking ...')
+            self.select_class_optionbox.configure(state=DISABLED)
+            self.start_processing()
+
+        threading.Thread(target=thread_handler).start()
+
+
+
 
     def run(self):
         self.mainloop()
