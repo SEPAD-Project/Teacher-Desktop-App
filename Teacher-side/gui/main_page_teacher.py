@@ -4,11 +4,13 @@ from pathlib import Path
 import sys
 from threading import Thread
 from ping3 import ping
+from datetime import datetime
 
 parent_dir = Path(__file__).resolve().parent.parent
 sys.path.append(str(parent_dir / "backend"))
 
-from get_students import get_students_list, fetch_messages
+from get_students import get_students_list
+from get_message import fetch_messages
 
 parent_dir = Path(__file__).resolve().parent.parent.parent
 sys.path.append(str(parent_dir / "database-code"))
@@ -144,6 +146,22 @@ class MainPage(CTk):
         self.checking_entry.insert(0, txt)
         self.checking_entry.configure(state='disabled')
 
+    def calculate_time_difference(self, input_time_str):
+        given_time = datetime.strptime(input_time_str, "%Y-%m-%d %H:%M:%S")
+        current_time = datetime.now()
+
+        delta = current_time - given_time
+        delta_hours = delta.total_seconds() / 3600 
+        delta_min = delta.total_seconds() / 60
+
+        
+        print(f"delta  {delta_hours:.1f} hours")
+        
+
+        if delta_hours >= 7:
+            return [False, "no record found"]
+        elif delta_hours < 7:
+            return [True, f'{delta_min:.2f}min ago']
 
     def update_data(self):
         def update_data_thread_handler():
@@ -152,25 +170,36 @@ class MainPage(CTk):
             if self.students_list[0]:
                 for student in self.students_list[1] :
                     print(f'im going to get message of {student}...')
-                    respond = fetch_messages(student=student, school_name=self.school_code, class_code=self.class_name)
+                    respond = fetch_messages(national_code=student, school_code=self.school_code, class_code=self.class_name)
                     print(f'this is respond : <{respond}>')
                     if respond[0] :
                         if respond[1] != 'No messages yet':
-                            code, time = str(respond[1]).split('-')[0], str(respond[1]).split('-')[1] 
-                            if code == '1':
-                                final_message = f'Students goes-{time}'
-                            elif code == '2' :
-                                final_message = f'Identity not confirmed-{time}'
-                            elif code == '3' :
-                                final_message = f'Sleeping-{time}'
-                            elif code == '4':
-                                final_message = f'Not looking-{time}'
-                            elif code == '5' :
-                                final_message = f'Looking-{time}'
-                            elif code == 'True' : 
-                                final_message = f'Fucking looking-{time}'
-                            
-                            self.table.item(self.student_rows[student], values=(self.translated_name[student], final_message, "N/A", "N/A"))
+                            code, time = str(respond[1]).split('|=|')[0], str(respond[1]).split('|=|')[1] 
+                            status, time = self.calculate_time_difference(time)
+                            print(status)
+                            print(time)
+                            if status :
+
+                                if code == '1':
+                                    final_message = f'Students goes-{time}'
+                                elif code == '2' :
+                                    final_message = f'Identity not confirmed-{time}'
+                                elif code == '3' :
+                                    final_message = f'Sleeping-{time}'
+                                elif code == '4':
+                                    final_message = f'Not looking-{time}'
+                                elif code == '5' :
+                                    final_message = f'Looking-{time}'
+                                elif code == 'True' : 
+                                    final_message = f'Fucking looking-{time}'
+                                
+                                self.table.item(self.student_rows[student], values=(self.translated_name[student], final_message, "N/A", "N/A"))
+                        
+                            else:
+                                final_message = f'last seen long time ago'
+                                self.table.item(self.student_rows[student], values=(self.translated_name[student], final_message, "N/A", "N/A"))
+
+
                         else:
                             self.table.item(self.student_rows[student], values=(self.translated_name[student], 'No messages yet', "N/A", "N/A"))
 
