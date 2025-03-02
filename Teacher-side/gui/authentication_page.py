@@ -1,4 +1,4 @@
-from customtkinter import CTk, CTkFrame, CTkLabel, CTkEntry, CTkButton, CTkCheckBox
+from customtkinter import CTk, CTkFrame, CTkLabel, CTkEntry, CTkButton, CTkCheckBox, CTkTabview
 from threading import Thread
 from tkinter import messagebox
 import sys
@@ -40,27 +40,40 @@ class TeacherSideAppLoginPage(CTk):
 
     def create_widgets(self):
         """Create and arrange GUI elements"""
-        self.element_frame = CTkFrame(master=self.main_frame, fg_color='transparent')
-        self.element_frame.place(relx=0.5, rely=0.5, anchor='center')
 
-        # List of GUI elements
-        elements = [
-            CTkLabel(master=self.element_frame, text="Login Page", font=('montserrat', 26, 'bold')),
-            CTkLabel(master=self.element_frame, text='USERNAME', font=('montserrat', 20)),
-            CTkLabel(master=self.element_frame, text='PASSWORD', font=('montserrat', 20)),
-            CTkEntry(master=self.element_frame, placeholder_text='username', width=180, height=38, 
+        self.tabv = CTkTabview(self.main_frame)
+        self.tabv.add('Login')
+        self.tabv.add('Register')
+        self.tabv.set('Login')
+        self.tabv.pack(padx=20, pady=20,fill='both', expand=True)
+
+        self.login_frame = self.tabv.tab('Login')
+        self.register_frame = self.tabv.tab('Register')
+
+        self.login_element_frame = CTkFrame(master=self.login_frame, fg_color='transparent')
+        self.login_element_frame.place(relx=0.5, rely=0.45, anchor='center')
+
+        self.register_element_frame = CTkFrame(master=self.register_frame, fg_color='transparent')
+        self.register_element_frame.place(relx=0.5, rely=0.45, anchor='center')
+
+        # List of Login GUI elements
+        elements_login = [
+            CTkLabel(master=self.login_element_frame, text="Login Page", font=('montserrat', 26, 'bold')),
+            CTkLabel(master=self.login_element_frame, text='USERNAME', font=('montserrat', 20)),
+            CTkLabel(master=self.login_element_frame, text='PASSWORD', font=('montserrat', 20)),
+            CTkEntry(master=self.login_element_frame, placeholder_text='username', width=180, height=38, 
                     font=('montserrat', 15, 'bold'), corner_radius=10),
-            CTkEntry(master=self.element_frame, placeholder_text='password', show="*", width=180, height=38,
+            CTkEntry(master=self.login_element_frame, placeholder_text='password', show="*", width=180, height=38,
                     font=('montserrat', 15, 'bold'), corner_radius=10),
-            CTkCheckBox(master=self.element_frame, text='I agree to Terms and Conditions',
+            CTkCheckBox(master=self.login_element_frame, text='I agree to Terms and Conditions',
                        font=('montserrat', 15), corner_radius=20, onvalue='on', offvalue='off'),
-            CTkButton(master=self.element_frame, text="Login", font=('montserrat', 20, 'bold'),
+            CTkButton(master=self.login_element_frame, text="Login", font=('montserrat', 20, 'bold'),
                      corner_radius=10, command=self.handle_login)
         ]
 
         # Positioning settings
         grid_config = [
-            (0, 0, {'columnspan': 2}),
+            (0, 0, {'columnspan': 2, 'pady': (20,0)}),
             (1, 0, {'padx': (0,40), 'pady': (40,15)}),
             (2, 0, {'padx': (0,40), 'pady': (0,15)}),
             (1, 1, {'padx': (40,0), 'pady': (40,15)}),
@@ -70,13 +83,61 @@ class TeacherSideAppLoginPage(CTk):
         ]
 
         # Placing elements in the grid
-        for element, (row, col, kwargs) in zip(elements, grid_config):
+        for element, (row, col, kwargs) in zip(elements_login, grid_config):
             element.grid(row=row, column=col, **kwargs)
 
         # Assignment to class variables
         (self.login_text, self.username_lbl, self.password_lbl, 
          self.username_entry, self.password_entry, self.checkbox, 
-         self.login_btn) = elements
+         self.login_btn) = elements_login
+
+
+        # List of Register GUI elements
+        elements_register = [
+            CTkLabel(master=self.register_element_frame, text="Register Page", font=('montserrat', 26, 'bold')),
+            CTkLabel(master=self.register_element_frame, text='NAME', font=('montserrat', 20)),
+            CTkLabel(master=self.register_element_frame, text='PASSWORD', font=('montserrat', 20)),
+            CTkLabel(master=self.register_element_frame, text='NATIONAL CODE', font=('montserrat', 20)),
+
+            CTkEntry(master=self.register_element_frame, placeholder_text='first name', width=105, height=38, 
+                    font=('montserrat', 15, 'bold'), corner_radius=10),
+            CTkEntry(master=self.register_element_frame, placeholder_text='last name', width=105, height=38,
+                    font=('montserrat', 15, 'bold'), corner_radius=10),
+            CTkEntry(master=self.register_element_frame, placeholder_text='national code', width=220, height=38,
+                    font=('montserrat', 15, 'bold'), corner_radius=10),
+            CTkEntry(master=self.register_element_frame, placeholder_text='password', show="*", width=220, height=38,
+                    font=('montserrat', 15, 'bold'), corner_radius=10),
+            CTkCheckBox(master=self.register_element_frame, text='I agree to Terms and Conditions',
+                       font=('montserrat', 15), corner_radius=20, onvalue='on', offvalue='off'),
+            CTkButton(master=self.register_element_frame, text="Register", font=('montserrat', 20, 'bold'),
+                     corner_radius=10, command=self.handle_login)
+        ]
+
+        # Positioning settings
+        grid_config = [
+            (0, 0, {'columnspan': 3, 'pady': (20,0)}),                 # register page
+            (1, 0, {'padx': (0,40), 'pady': (20,0), 'sticky': 'w'}), # name
+            (2, 0, {'padx': (0,40), 'pady': (10,0), 'sticky': 'w'}),  # password
+            (3, 0, {'padx': (0,40), 'pady': (10,0), 'sticky': 'w'}),  # national code
+            (1, 1, {'pady': (20,0), 'sticky': 'w'}),                 # first name
+            (1, 2, {'pady': (20,0), 'sticky': 'e'}),                 # last name
+            (3, 1, {'pady': (10,0), 'columnspan': 2}), # national code
+            (2, 1, {'pady': (10,0), 'columnspan': 2}), # password
+            (4, 0, {'pady': (10,0), 'columnspan': 3}),                  # terms and conditions
+            (5, 0, {'pady': (10,0), 'columnspan': 3, 'sticky': 'ew'})  # register button
+        ]
+
+        # Placing elements in the grid
+        for element, (row, col, kwargs) in zip(elements_register, grid_config):
+            element.grid(row=row, column=col, **kwargs)
+
+        # Assignment to class variables
+        (self.register_text, self.name_text, self.password_register_lbl, self.natoinal_code_register_lbl,
+         self.first_name_entry, self.last_name_entry, self.national_code_entry, self.password_entry ,self.checkbox_register, 
+         self.register_btn) = elements_register
+
+    def handle_register(self):
+        Thread
 
     def handle_login(self):
         """Manage login process with threading"""
