@@ -33,5 +33,5 @@ def register_btn_func(first_name, last_name, national_code, password):
     
 
 
-
-print(register_btn_func('ali', 'sharifi', '093222', 'supsecpas'))
+if __name__ == '__main__':
+    print(register_btn_func('ali', 'sharifi', '093222', 'supsecpas'))
