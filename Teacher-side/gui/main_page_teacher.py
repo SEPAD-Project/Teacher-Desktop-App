@@ -49,7 +49,7 @@ class MainPage(CTk):
             show='headings',
             height=15
         )
-        Thread(target=self.get_students_list).start()
+        Thread(target=self.get_students_list_func).start()
 
 
         # Defining Columns
@@ -113,14 +113,15 @@ class MainPage(CTk):
             self.ping_entry.configure(state=DISABLED)
         self.after(1000, self.pinging)
 
-    def get_students_list(self):
+    def get_students_list_func(self):
         self.students_list = get_students_list(school_name=self.school_code, class_code=self.class_name)
         if self.students_list[0]:
             self.update_entry('GETTING')
             Thread(target=self.translate_natoinal_code_to_name, daemon=True).start()
         else:
+            self.update_entry('ERROR')
             print(f'--------------------\nERROR IS : \n{self.students_list[1]}\n--------------------')
-            self.after(30000, self.get_students_list)
+            self.after(30000, self.get_students_list_func)
 
     def translate_natoinal_code_to_name(self):
         # national_code : name
