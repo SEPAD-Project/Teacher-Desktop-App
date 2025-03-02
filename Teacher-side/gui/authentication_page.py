@@ -6,12 +6,13 @@ from requests import get, exceptions
 from pathlib import Path
 
 # System paths
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
-sys.path.append(str(BASE_DIR / "Login/"))
-
+BASE_DIR = Path(__file__).resolve().parent.parent
+sys.path.append(str(BASE_DIR.parent / "Login/"))
+sys.path.append(str(BASE_DIR / "backend/"))
 
 # imports after path configuration
 from login_page_db import check_auth
+from register_back import register_btn_func
 
 from select_class_page import select_class_page_func
 
@@ -110,7 +111,7 @@ class TeacherSideAppLoginPage(CTk):
             CTkCheckBox(master=self.register_element_frame, text='I agree to Terms and Conditions',
                        font=('montserrat', 15), corner_radius=20, onvalue='on', offvalue='off'),
             CTkButton(master=self.register_element_frame, text="Register", font=('montserrat', 20, 'bold'),
-                     corner_radius=10, command=self.handle_login)
+                     corner_radius=10, command=self.handle_register)
         ]
 
         # Positioning settings
@@ -137,7 +138,30 @@ class TeacherSideAppLoginPage(CTk):
          self.register_btn) = elements_register
 
     def handle_register(self):
-        Thread
+        self.toggle_register_button(state='disabled')
+        
+        def register_thread_handler():
+            result = register_btn_func(first_name=self.first_name_entry.get().strip(),
+                              last_name=self.last_name_entry.get().strip(),
+                              national_code=self.national_code_entry.get().strip(),
+                              password=self.password_entry.get().strip())
+            if result == 'exist':
+                messagebox.showerror('Register Error', f'National code {self.national_code_entry.get().strip()} is already added')
+            elif result == 'registered':
+                messagebox.showinfo('Successful registration ', f'You have successfully registered !')
+            elif result == 'Fill in all the fields':
+                messagebox.showerror('Register Error', f'Fill in all the fields !')
+            elif result == 'error':
+                messagebox.showerror('Register Error', 'An Error occured !')
+            self.toggle_register_button()
+        
+        if self.checkbox_register.get() == 'on':
+            Thread(target=register_thread_handler).start()
+        
+        else:
+            self.show_error("Agreement Error", "You must agree to the terms and conditions!")
+            self.toggle_register_button()
+                
 
     def handle_login(self):
         """Manage login process with threading"""
@@ -231,6 +255,11 @@ class TeacherSideAppLoginPage(CTk):
         """Toggle login button state"""
         self.login_btn.configure(state=state, text="Login" if state == 'normal' else "Processing...")
 
+    def toggle_register_button(self, state='normal'):
+        """Toggle Register button state"""
+        self.register_btn.configure(state=state, text="Register" if state == 'normal' else "Processing...")
+
+    
     def show_error(self, title, message):
         """Show error message dialog"""
         self.after(0, lambda: messagebox.showerror(title, message))
