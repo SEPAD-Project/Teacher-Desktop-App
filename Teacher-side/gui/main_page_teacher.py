@@ -117,6 +117,8 @@ class MainPage(CTk):
         self.students_list = get_students_list(school_name=self.school_code, class_code=self.class_name)
         if self.students_list[0]:
             self.update_entry('GETTING')
+                                  # name : sum, count, last time
+            self.accuracy_dict = {national_code:[0, 0, ''] for national_code in self.students_list[1]}
             Thread(target=self.translate_natoinal_code_to_name, daemon=True).start()
         else:
             self.update_entry('ERROR')
@@ -175,8 +177,9 @@ class MainPage(CTk):
                     print(f'this is respond : <{respond}>')
                     if respond[0] :
                         if respond[1] != 'No messages yet':
-                            code, time = str(respond[1]).split('|=|')[0], str(respond[1]).split('|=|')[1] 
-                            status, time = self.calculate_time_difference(time)
+                            code, message_time = str(respond[1]).split('|=|')[0], str(respond[1]).split('|=|')[1] 
+                            status, time = self.calculate_time_difference(message_time)
+
                             print(status)
                             print(time)
                             if status :
@@ -194,7 +197,23 @@ class MainPage(CTk):
                                 elif code == 'True' : 
                                     final_message = f'Fucking looking-{time}'
                                 
-                                self.table.item(self.student_rows[student], values=(self.translated_name[student], final_message, "N/A", "N/A"))
+                                print(f'getting accuracy rate {student} ...')
+                                self.accuracy_data = self.accuracy_dict[student] # list [sum, count, last time]
+                                print(f'last time is {self.accuracy_data[2]}')
+                                print(f'message time is {message_time}')
+                                if self.accuracy_data[2] != message_time:
+                                    self.accuracy_data[2] = message_time     # setting new time
+                                    self.accuracy_data[1] = int(self.accuracy_data[1]) + 1   # + count
+                                    if code == '5': # if looking
+                                        self.accuracy_data[0] += 1   # adding to sum
+                                    else: # if not looking
+                                        pass
+                                    self.accuracy_rate = float((self.accuracy_data[0] / self.accuracy_data[1]) * 100).__round__(1)
+                                    print(self.accuracy_rate)
+
+
+
+                                self.table.item(self.student_rows[student], values=(self.translated_name[student], final_message, str(self.accuracy_rate)+'%', "N/A"))
                         
                             else:
                                 final_message = f'last seen long time ago'
