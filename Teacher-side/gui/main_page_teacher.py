@@ -1,16 +1,18 @@
 from customtkinter import CTk, CTkButton, CTkFrame, CTkLabel, CTkEntry, NORMAL, DISABLED, END
-from tkinter import ttk, CENTER, BOTH, RIGHT, Y, VERTICAL
+from tkinter import ttk, CENTER, VERTICAL
 from pathlib import Path
 import sys
 from threading import Thread
 from ping3 import ping
 from datetime import datetime
+from tkinter import messagebox
 
 parent_dir = Path(__file__).resolve().parent.parent
 sys.path.append(str(parent_dir / "backend"))
 
 from get_students import get_students_list
 from get_message import fetch_messages
+from get_active_window import get_active_window_from_server
 
 parent_dir = Path(__file__).resolve().parent.parent.parent
 sys.path.append(str(parent_dir / "database-code"))
@@ -31,7 +33,7 @@ class MainPage(CTk):
         self.students_list = [False, 'NotAssigned']
 
         self.title("Main Page")
-        self.geometry('900x600')
+        self.geometry('900x680')
         self.minsize(900, 600)
         # main red frame
         self.main_frame = CTkFrame(master=self, border_color='red', border_width=2)
@@ -57,6 +59,8 @@ class MainPage(CTk):
             self.table.heading(col, text=col, anchor=CENTER)
             if col == 'Name' :
                 self.table.column(col, anchor=CENTER, width=160)
+            elif col == 'Desktop' :
+                self.table.column(col, anchor=CENTER, width=160)
             else:
                 self.table.column(col, anchor=CENTER, width=80)
             self.table.column('Last Check result & Time', anchor=CENTER, width=200)
@@ -75,11 +79,13 @@ class MainPage(CTk):
         self.ping_lbl_and_check_status = CTkLabel(master=self.element_frame, text='STATUS / PING', font=('montserrat', 20, 'bold'))
         self.checking_entry = CTkEntry(master=self.element_frame, height=40, width=150, font=('montserrat', 17, 'bold'), border_color='#2B2B2B', justify='right', fg_color='#2B2B2B')
         self.ping_entry = CTkEntry(master=self.element_frame, height=40, width=100, font=('montserrat', 17, 'bold'), border_color='#2B2B2B', justify='right', fg_color='#2B2B2B')
+        self.more_info_button = CTkButton(master=self.element_frame, text='More Info', font=('montserrat', 20, 'bold'), height=30, width=250, border_color='white', border_width=2, command=self.show_more_info)
         self.exit_button = CTkButton(master=self.element_frame, text='Exit', font=('montserrat', 20, 'bold'), height=30, width=250, fg_color='red', hover_color='#6B0011', border_color='white', border_width=2, command=lambda: self.destroy())
 
         # placing elements in element_frame      
-        self.main_label.grid(row=0, column=0 ,sticky='n', columnspan=3)
-        self.exit_button.grid(row=3, column=0, pady=(10,0), sticky='we', columnspan=3)
+        self.main_label.grid(row=0, column=0 ,sticky='n',columnspan=3)
+        self.more_info_button.grid(row=3, column=0, pady=(10,0), sticky='we', columnspan=3)
+        self.exit_button.grid(row=4, column=0, pady=(10,0), sticky='we', columnspan=3)
         self.ping_lbl_and_check_status.grid(row=2, column=0, sticky='w')
         self.checking_entry.grid(row=2, column=1, sticky='e')
         self.ping_entry.grid(row=2, column=2, sticky='e')
@@ -87,6 +93,40 @@ class MainPage(CTk):
         self.checking_entry.configure(state=DISABLED)
         self.ping_entry.configure(state=DISABLED)
         Thread(target=self.pinging).start()
+
+    def update_entry(self, txt):
+        self.checking_entry.configure(state='normal')
+        self.checking_entry.delete(0, END)
+        self.checking_entry.insert(0, txt)
+        self.checking_entry.configure(state='disabled')
+
+    def show_more_info(self):
+        selected_item = self.table.selection()
+        if not selected_item:
+            messagebox.showwarning("Warning", "Please select a student first!")
+            return
+        
+        # Get student data
+        item_data = self.table.item(selected_item)['values']
+        national_code = None
+        
+        # Find national code by student name
+        for code, name in self.translated_name.items():
+            if name == item_data[0]:
+                national_code = code
+                break
+        
+        if national_code:
+            # Here you can implement what to do with the selected student
+            # For example show details in new window
+            messagebox.showinfo("Student Info", 
+                f"National Code: {national_code}\n"
+                f"Name: {item_data[0]}\n"
+                f"Last Status: {item_data[1]}\n"
+                f"Accuracy: {item_data[2]}\n"
+                f"Current Window: {item_data[3]}")
+        else:
+            messagebox.showerror("Error", "Student data not found!")
 
     def pinging(self):
         try:
@@ -143,12 +183,6 @@ class MainPage(CTk):
             print(f'ERROR : {self.students_list[1]}')
             self.after(30000, self.set_students_int_table)
 
-    def update_entry(self, txt):
-        self.checking_entry.configure(state='normal')
-        self.checking_entry.delete(0, END)
-        self.checking_entry.insert(0, txt)
-        self.checking_entry.configure(state='disabled')
-
     def calculate_time_difference(self, input_time_str):
         given_time = datetime.strptime(input_time_str, "%Y-%m-%d %H:%M:%S")
         current_time = datetime.now()
@@ -173,7 +207,10 @@ class MainPage(CTk):
             if self.students_list[0]:
                 for student in self.students_list[1] :
                     print(f'im going to get message of {student}...')
-                    respond = fetch_messages(national_code=student, school_code=self.school_code, class_code=self.class_name)
+                    respond = fetch_messages(national_code=student, 
+                                             school_code=self.school_code, 
+                                             class_code=self.class_name)
+                    
                     print(f'this is respond : <{respond}>')
                     if respond[0] :
                         if respond[1] != 'No messages yet':
@@ -183,7 +220,7 @@ class MainPage(CTk):
                             print(status)
                             print(time)
                             if status :
-
+                                open_window = 'Not in Class'
                                 if code == '1':
                                     final_message = f'Students goes-{time}'
                                 elif code == '2' :
@@ -192,8 +229,22 @@ class MainPage(CTk):
                                     final_message = f'Sleeping-{time}'
                                 elif code == '4':
                                     final_message = f'Not looking-{time}'
+                                    window_respond = get_active_window_from_server(school=self.school_code,
+                                                                   class_name=self.class_name,
+                                                                   student_id=student)
+                                    for i in ['Skyroom', 'Adobe Connect', 'Shad']:
+                                        if i in str(window_respond) :
+                                            open_window = i
+                                            break
                                 elif code == '5' :
                                     final_message = f'Looking-{time}'
+                                    window_respond = get_active_window_from_server(school=self.school_code,
+                                                                   class_name=self.class_name,
+                                                                   student_id=student)
+                                    for i in ['Skyroom', 'Adobe Connect', 'Shad']:
+                                        if i in str(window_respond) :
+                                            open_window = i
+                                            break
                                 elif code == 'True' : 
                                     final_message = f'Fucking looking-{time}'
                                 
@@ -213,7 +264,7 @@ class MainPage(CTk):
 
 
 
-                                self.table.item(self.student_rows[student], values=(self.translated_name[student], final_message, str(self.accuracy_rate)+'%', "N/A"))
+                                self.table.item(self.student_rows[student], values=(self.translated_name[student], final_message, str(self.accuracy_rate)+'%', open_window))
                         
                             else:
                                 final_message = f'last seen long time ago'
