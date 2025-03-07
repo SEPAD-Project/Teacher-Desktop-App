@@ -1,7 +1,7 @@
 import requests
 
-# server address
-server_url = "http://185.4.28.110:5001"
+# server address 185.4.28.110
+server_url = "http://127.0.0.1:5001"
 
 # getting students message and show them
 def fetch_messages(national_code: str, school_code: str, class_code: str)-> list[bool, str]:
