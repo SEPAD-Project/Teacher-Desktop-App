@@ -13,6 +13,7 @@ class SelectClassPage(CTk):
     def __init__(self, udata):
         super().__init__()
         self.udata = udata
+        print(udata[3])
         self.title("Select Class Page")
         self.geometry('650, 550')
         self.minsize(650, 550)
@@ -100,12 +101,18 @@ class SelectClassPage(CTk):
             time.sleep(1)  # Simulate processing
             if self.udata[3] != 'empty':
                 self.list_from_string = ast.literal_eval(self.udata[3])
+                print(1)
+                print(self.list_from_string)
                 self.decrypted_list = [(str(int(code.split('#')[0], 16))+ '-' +(''.join(chr(int(h, 16) ^ ord('crax6ix'[i % len('crax6ix')])) for i, h in enumerate(code.split('#')[1].split('-'))))) for code in self.list_from_string]
+                print(5)
+                print(self.decrypted_list)
                 # Stage 2: Translating
                 self.after(0, self.update_progress, 0.6, "Translating class names...")
                 time.sleep(1)  # Simulate processing
                 self.school_name = {i.split('-')[0]:get_class_name(i.split('-')[0]) for i in self.decrypted_list} # code:name
                 self.translated_list = [f"{self.school_name[i.split('-')[0]]}-{i.split('-')[1]}" for i in self.decrypted_list]
+                print(9)
+                print(self.translated_list)
                 # Final stage
                 self.after(0, self.update_progress, 1.0, "Loading completed!")
                 time.sleep(0.5)
@@ -132,15 +139,17 @@ class SelectClassPage(CTk):
             self.select_class_optionbox.configure(state=DISABLED)
             self.Retrying_button.configure(state=NORMAL,height=30,width=350)
 
-    def join_to_class(self):
+    def join_to_class(self): # self.list_from_string
         class_id = self.select_class_optionbox.get()
+        class_unic_code = self.list_from_string[self.translated_list.index(class_id)]
         school_code = [code for code, name in self.school_name.items() 
                       if name == class_id.split('-')[0]]
         if school_code:
             self.destroy()
             main_page_func_teacher(school_code[0], 
                                   class_id.split('-')[0], 
-                                  class_id.split('-')[1])
+                                  class_id.split('-')[1],
+                                  class_unic_code)
 
     def Retrying_func(self):
         def thread_handler():

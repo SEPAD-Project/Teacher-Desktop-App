@@ -6,7 +6,7 @@ from datetime import datetime
 
 class StudentMonitorBackend:
     def __init__(self, school, class_name, student_id):
-        self.server_url = 'http://localhost:5002'
+        self.server_url = 'http://185.4.28.110:5002'
         self.school = school
         self.class_name = class_name
         self.student_id = student_id
