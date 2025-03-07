@@ -10,7 +10,7 @@ from tkinter import messagebox
 parent_dir = Path(__file__).resolve().parent.parent
 sys.path.append(str(parent_dir / "backend"))
 
-from get_students import get_students_list
+from get_students import get_students_by_class_code
 from get_message import fetch_messages
 from get_active_window import get_active_window_from_server
 from window_receiver_gui import creator
@@ -22,8 +22,9 @@ from searching import get_students_name_by_national_code
 
 
 class MainPage(CTk):
-    def __init__(self, school_code, school_name, class_name):
+    def __init__(self, school_code, school_name, class_name, unic_class_code):
         super().__init__()
+        self.unic_class_code = unic_class_code
         self.school_code = school_code
         self.school_name = school_name
         self.class_name = class_name
@@ -153,7 +154,7 @@ class MainPage(CTk):
         self.after(1000, self.pinging)
 
     def get_students_list_func(self):
-        self.students_list = get_students_list(school_name=self.school_code, class_code=self.class_name)
+        self.students_list = get_students_by_class_code(unic_class_code=self.unic_class_code)
         if self.students_list[0]:
             self.update_entry('GETTING')
                                   # name : sum, count, last time
@@ -286,8 +287,8 @@ class MainPage(CTk):
         self.mainloop()
 
 
-def main_page_func_teacher(school_code, school_name, class_name):
-    app = MainPage(school_code, school_name, class_name)
+def main_page_func_teacher(school_code, school_name, class_name, unic_class_code):
+    app = MainPage(school_code, school_name, class_name, unic_class_code)
     app.run()
 
 

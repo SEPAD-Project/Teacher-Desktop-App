@@ -89,7 +89,7 @@ class TeacherSideAppLoginPage(CTk):
 
         # Assignment to class variables
         (self.login_text, self.username_lbl, self.password_lbl, 
-         self.username_entry, self.password_entry, self.checkbox, 
+         self.username_entry, self.login_password_entry, self.checkbox, 
          self.login_btn) = elements_login
 
 
@@ -195,9 +195,11 @@ class TeacherSideAppLoginPage(CTk):
     def validate_inputs(self):
         """Validate user inputs"""
         username = self.username_entry.get().strip()
-        password = self.password_entry.get().strip()
+        password = self.login_password_entry.get().strip()
         
         if not all([username, password]):
+            print(username)
+            print(password)
             self.show_error("Input Error", "Username and password cannot be empty!")
             self.toggle_login_button()
             return False
@@ -224,7 +226,7 @@ class TeacherSideAppLoginPage(CTk):
         try:
             return check_auth(
                 self.username_entry.get().strip(),
-                self.password_entry.get().strip(),
+                self.login_password_entry.get().strip(),
                 'teacher'
             )
         except Exception as e:
