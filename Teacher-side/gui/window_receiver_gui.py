@@ -13,9 +13,11 @@ class CheckStudentScreen(CTk):
         super().__init__()
         self.student_name = student_name
         self.backend = StudentMonitorBackend(school, class_name, student_id)
+        self.is_running = True  # Flag for managing running status
         self.init_ui()
         self.setup_window()
         self.start_monitoring()
+        self.protocol("WM_DELETE_WINDOW", self.on_close)
 
     def init_ui(self):
         """Initialize all UI components"""
@@ -80,6 +82,8 @@ class CheckStudentScreen(CTk):
 
     def update_ui(self):
         """Update UI with latest data"""
+        if not self.is_running:  # do not run, if app was closed
+            return
         data = self.backend.get_latest_data()
         if data:
             # Update active window
@@ -103,21 +107,36 @@ class CheckStudentScreen(CTk):
                 label = CTkLabel(self.windows_list, text=window)
                 label.pack(anchor='w', padx=5, pady=2)
         
-        self.after(1000, self.update_ui)
+        if self.is_running:
+            self.after(1000, self.update_ui)
 
     def on_close(self):
-        """Handle window close event"""
-        self.backend.stop_monitoring()
-        self.destroy()
+        """stop everythings"""
+        self.is_running = False  # disabling updates
+        self.backend.stop_monitoring() 
+        self.destroy() 
 
     def run(self):
         self.mainloop()
 
+def creator(school_code, class_code, national_code, std_name):
+    print(school_code)
+    print(class_code)
+    print(national_code)
+    print(std_name)
+    app = CheckStudentScreen(
+        school=school_code,
+        class_name=class_code,
+        student_id=national_code,
+        student_name=std_name
+    )
+    app.run()   
+
 if __name__ == '__main__':
     app = CheckStudentScreen(
-        school='Test School',
-        class_name='Class A',
-        student_id='STD123',
+        school='123',
+        class_name='1052',
+        student_id='09295',
         student_name="Abolfazl Rashidian"
     )
     app.run()
