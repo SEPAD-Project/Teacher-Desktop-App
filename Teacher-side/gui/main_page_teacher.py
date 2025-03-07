@@ -13,6 +13,7 @@ sys.path.append(str(parent_dir / "backend"))
 from get_students import get_students_list
 from get_message import fetch_messages
 from get_active_window import get_active_window_from_server
+from window_receiver_gui import creator
 
 parent_dir = Path(__file__).resolve().parent.parent.parent
 sys.path.append(str(parent_dir / "database-code"))
@@ -101,32 +102,30 @@ class MainPage(CTk):
         self.checking_entry.configure(state='disabled')
 
     def show_more_info(self):
-        selected_item = self.table.selection()
-        if not selected_item:
-            messagebox.showwarning("Warning", "Please select a student first!")
-            return
-        
-        # Get student data
-        item_data = self.table.item(selected_item)['values']
-        national_code = None
-        
-        # Find national code by student name
-        for code, name in self.translated_name.items():
-            if name == item_data[0]:
-                national_code = code
-                break
-        
-        if national_code:
-            # Here you can implement what to do with the selected student
-            # For example show details in new window
-            messagebox.showinfo("Student Info", 
-                f"National Code: {national_code}\n"
-                f"Name: {item_data[0]}\n"
-                f"Last Status: {item_data[1]}\n"
-                f"Accuracy: {item_data[2]}\n"
-                f"Current Window: {item_data[3]}")
-        else:
-            messagebox.showerror("Error", "Student data not found!")
+        def show_info_thread_handler():
+            selected_item = self.table.selection()
+            if not selected_item:
+                messagebox.showwarning("Warning", "Please select a student first!")
+                return
+            
+            # Get student data
+            item_data = self.table.item(selected_item)['values']
+            national_code = None
+            
+            # Find national code by student name
+            for code, name in self.translated_name.items():
+                if name == item_data[0]:
+                    national_code = code
+                    break
+            
+            if national_code:
+                creator(self.school_code,
+                        self.class_name,
+                        national_code,
+                        item_data[0])
+            else:
+                messagebox.showerror("Error", "Student data not found!")
+        Thread(target=show_info_thread_handler).start()
 
     def pinging(self):
         try:
