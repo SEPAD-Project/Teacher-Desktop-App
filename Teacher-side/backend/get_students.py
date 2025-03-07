@@ -1,31 +1,57 @@
-import requests
+import mysql.connector
+from mysql.connector import Error
 
-# server address
-server_url = "http://185.4.28.110:5001"
-
-# getting students list
-def get_students_list(school_name, class_code):
-    '''
-    Returns the list of students of the desired school name (school code)
-
-    Args:
-        school_name : school code to connect to directory of school
-        class_code : class code to find class name and connect to direcctory of that class
-    '''
+def get_students_by_class_code(unic_class_code):
+    """
+    Retrieve national IDs of students in a specific class code from MySQL database.
+    Returns list of national IDs or appropriate error message.
+    """
+    conn = None
+    cursor = None
     try:
-        response = requests.post(f"{server_url}/get_students", json={"school_name": school_name, "class_code": class_code}, timeout=3)
-        print(f'this is school path (school name) : {school_name}')
-        print(f'this is class path (class code) : {class_code}')
-        if response.status_code != 200:
-            return [False, 'no school or class found'] # , response.json().get("error", "Unknown error")
-        else:
-            students = response.json().get("students", [])
-            if not students:
-                return [False, 'No Students found']
-            else:
-                return [True, students]
-    except ConnectionError:
-        return [False, 'ConnetionError']
+        # Connect to MySQL database (replace with your credentials)
+        conn = mysql.connector.connect(
+            host="185.4.28.110",
+            database='sap',
+            user='root',
+            password='sapprogram2583',
+            port=5000
+        )
+        
+        cursor = conn.cursor()
+        print(f'class code given in get students is {unic_class_code}')
+        # Parameterized query to prevent SQL injection
+        query = "SELECT student_national_code FROM students WHERE class_code = %s"
+        cursor.execute(query, (unic_class_code,))
+        
+        # Fetch all results as list of tuples
+        students = cursor.fetchall()
+        print(students)
+        
+        # Return message if no students found
+        if not students:
+            return [False, "No students found in this class"]
+            
+        # Extract national IDs from tuples and return as list
+        return [True, [student[0] for student in students]]
+        
+    except Error as e:
+        # Handle MySQL specific errors
+        return [False, f"Database Error: {str(e)}"]
     except Exception as e:
-        return [False, e]
+        # Handle other unexpected errors
+        return [False, f"Unexpected Error: {str(e)}"]
+    finally:
+        # Clean up resources
+        if cursor:
+            cursor.close()
+        if conn and conn.is_connected():
+            conn.close()
 
+# Example usage
+if __name__ == "__main__":
+    class_code = input("Enter class code: ")
+    result = get_students_by_class_code(class_code)
+    
+    print("National IDs of students:")
+    print(result)
