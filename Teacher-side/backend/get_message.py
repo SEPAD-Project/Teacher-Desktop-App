@@ -1,7 +1,16 @@
 import requests
+import os 
+import configparser
+
+config_path = os.path.join(os.path.dirname(__file__), '../config.ini')
+config = configparser.ConfigParser()
+config.read(config_path)
+
+ip_address = config['Server']['IP']
+port = int(config['Server']['Looking_result_receiver_port'])
 
 # server address 185.4.28.110
-server_url = "http://185.4.28.110:5001"
+server_url = f"http://{ip_address}:{port}"
 
 # getting students message and show them
 def fetch_messages(national_code: str, school_code: str, class_code: str)-> list[bool, str]:

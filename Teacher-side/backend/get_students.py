@@ -1,5 +1,18 @@
 import mysql.connector
 from mysql.connector import Error
+import os
+import configparser
+
+config_path = os.path.join(os.path.dirname(__file__), '../config.ini')
+config = configparser.ConfigParser()
+config.read(config_path)
+
+ip_address = config['Database']['Host']
+db_name = config['Database']['Database']
+port = int(config['Server']['DB_port'])
+user = config['Database']['User']
+password = config['Database']['Password']
+
 
 def get_students_by_class_code(unic_class_code):
     """
@@ -11,11 +24,11 @@ def get_students_by_class_code(unic_class_code):
     try:
         # Connect to MySQL database (replace with your credentials)
         conn = mysql.connector.connect(
-            host="185.4.28.110",
-            database='sap',
-            user='root',
-            password='sapprogram2583',
-            port=5000
+            host=ip_address,
+            database=db_name,
+            user=user,
+            password=password,
+            port=port
         )
         
         cursor = conn.cursor()

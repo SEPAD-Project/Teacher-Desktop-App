@@ -1,4 +1,13 @@
 import requests
+import os 
+import configparser
+
+config_path = os.path.join(os.path.dirname(__file__), '../config.ini')
+config = configparser.ConfigParser()
+config.read(config_path)
+
+ip_address = config['Server']['IP']
+port = int(config['Server']['Open_window_port'])
 
 def get_active_window_from_server(school, class_name, student_id):
     """
@@ -22,7 +31,7 @@ def get_active_window_from_server(school, class_name, student_id):
         
         # Send GET request to the server
         response = requests.get(
-            f"http://localhost:5002/get",
+            f"http://{ip_address}:{port}/get",
             params=params,
             timeout=5
         )

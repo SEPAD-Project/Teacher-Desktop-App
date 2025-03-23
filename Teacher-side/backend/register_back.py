@@ -1,5 +1,17 @@
 from database_handler import DatabaseHandler
 import json
+import os
+import configparser
+
+config_path = os.path.join(os.path.dirname(__file__), '../config.ini')
+config = configparser.ConfigParser()
+config.read(config_path)
+
+ip_address = config['Database']['Host']
+db_name = config['Database']['Database']
+port = int(config['Server']['DB_port'])
+user = config['Database']['User']
+password = config['Database']['Password']
 
 def register_btn_func(first_name, last_name, national_code, password):
     # checking that all fields are filled
@@ -8,12 +20,12 @@ def register_btn_func(first_name, last_name, national_code, password):
 
     # db config
     db_handler = DatabaseHandler(
-        host='185.4.28.110',
-        user='root',
-        port=5000, 
-        password='sapprogram2583',
-        database='sap'
-    )
+            host=ip_address,
+            database=db_name,
+            user=user,
+            password=password,
+            port=port
+        )
 
     try:
         classes_list = []

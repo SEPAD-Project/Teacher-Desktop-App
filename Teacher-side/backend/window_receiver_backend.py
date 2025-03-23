@@ -3,10 +3,19 @@ import threading
 import queue
 import time
 from datetime import datetime
+import os 
+import configparser
+
+config_path = os.path.join(os.path.dirname(__file__), '../config.ini')
+config = configparser.ConfigParser()
+config.read(config_path)
+
+ip_address = config['Server']['IP']
+port = int(config['Server']['Open_window_port'])
 
 class StudentMonitorBackend:
     def __init__(self, school, class_name, student_id):
-        self.server_url = 'http://185.4.28.110:5002'
+        self.server_url = f'http://{ip_address}:{port}'
         self.school = school
         self.class_name = class_name
         self.student_id = student_id
