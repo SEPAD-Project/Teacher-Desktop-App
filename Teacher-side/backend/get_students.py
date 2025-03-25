@@ -9,7 +9,7 @@ config.read(config_path)
 
 ip_address = config['Database']['Host']
 db_name = config['Database']['Database']
-port = int(config['Server']['DB_port'])
+port = int(config['Database']['DB_port'])
 user = config['Database']['User']
 password = config['Database']['Password']
 

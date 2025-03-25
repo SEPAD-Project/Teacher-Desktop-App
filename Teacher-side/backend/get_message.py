@@ -7,7 +7,7 @@ config = configparser.ConfigParser()
 config.read(config_path)
 
 ip_address = config['Server']['IP']
-port = int(config['Server']['Looking_result_receiver_port'])
+port = int(config['Server']['student_status_port'])
 
 # server address 185.4.28.110
 server_url = f"http://{ip_address}:{port}"
@@ -46,7 +46,7 @@ def fetch_messages(national_code: str, school_code: str, class_code: str)-> list
         return [True, data['message']]
     elif response.status_code == 404:
         data = response.json()
-        return [True, data['error']]
+        return [False, data['error']]
     else:
         return [False, 'Error']
         

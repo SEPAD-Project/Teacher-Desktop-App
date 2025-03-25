@@ -275,7 +275,7 @@ class MainPage(CTk):
                             self.table.item(self.student_rows[student], values=(self.translated_name[student], 'No messages yet', "N/A", "N/A"))
 
                     else:
-                        print('Connection Error while getting last message')
+                        print('Error while getting last message')
                         self.update_entry('ERROR')
             else:
                 print('an Error occured while getting studdents list')
