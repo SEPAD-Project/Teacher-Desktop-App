@@ -99,7 +99,9 @@ class SelectClassPage(CTk):
             # Stage 1: Decryption
             self.after(0, self.update_progress, 0.3, "Decryption class data...")
             time.sleep(1)  # Simulate processing
-            if self.udata[3] != 'empty':
+            print(self.udata[3])
+            print(type(self.udata[3]))
+            if self.udata[3] != '[]':
                 self.list_from_string = ast.literal_eval(self.udata[3])
                 print(1)
                 print(self.list_from_string)

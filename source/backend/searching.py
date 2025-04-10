@@ -3,12 +3,8 @@ import mysql.connector
 def get_values_by_username(value, person, host='localhost', user='root', password='ardbms', database='sap'):
     # connetcting to db
     db = mysql.connector.connect(
-        # host=host,  
-        # user=user,       
-        # password=password,  
-        # database=database 
     host="185.4.28.110",  
-    user="root", # sapacc - ardbms
+    user="root",
     port=5000,   
     password="sapprogram2583",
     database=database
@@ -89,6 +85,4 @@ def get_students_name_by_national_code(national_code):
         
 
 if __name__ == '__main__' :
-    # x = input('value : ')
-    # print(get_values_by_username(value=x, person='student'))
     get_students_name_by_national_code('09295')

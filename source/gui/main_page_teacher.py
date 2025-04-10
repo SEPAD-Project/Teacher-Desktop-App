@@ -49,15 +49,14 @@ class MainPage(CTk):
         # Creating Treeview (Table)
         self.table = ttk.Treeview(
             master=self.element_frame,
-            columns=("Name", "Last Check result & Time", "Accuracy rate", "Desktop"),
+            columns=("Name", "Last Check result & Time", "Accuracy", "Desktop"),
             show='headings',
             height=15
         )
         Thread(target=self.get_students_list_func).start()
 
-
         # Defining Columns
-        for col in ("Name", "Last Check result & Time", "Accuracy rate", "Desktop"):
+        for col in ("Name", "Last Check result & Time", "Accuracy", "Desktop"):
             self.table.heading(col, text=col, anchor=CENTER)
             if col == 'Name' :
                 self.table.column(col, anchor=CENTER, width=160)
@@ -66,7 +65,6 @@ class MainPage(CTk):
             else:
                 self.table.column(col, anchor=CENTER, width=80)
             self.table.column('Last Check result & Time', anchor=CENTER, width=200)
-
 
         # Adding Scrollbar
         self.scrollbar = ttk.Scrollbar(self.element_frame, orient=VERTICAL, command=self.table.yview)
@@ -245,9 +243,7 @@ class MainPage(CTk):
                                         if i in str(window_respond) :
                                             open_window = i
                                             break
-                                elif code == 'True' : 
-                                    final_message = f'Fucking looking-{time}'
-                                
+
                                 print(f'getting accuracy rate {student} ...')
                                 self.accuracy_data = self.accuracy_dict[student] # list [sum, count, last time]
                                 print(f'last time is {self.accuracy_data[2]}')
@@ -278,7 +274,7 @@ class MainPage(CTk):
                         print('Error while getting last message')
                         self.update_entry('ERROR')
             else:
-                print('an Error occured while getting studdents list')
+                print('an Error occured while getting students list')
             self.update_entry('STOPPED')
         Thread(target=update_data_thread_handler).start()
         self.after(30000, self.update_data)

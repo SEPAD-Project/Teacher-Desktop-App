@@ -146,7 +146,7 @@ class TeacherSideAppLoginPage(CTk):
                               national_code=self.national_code_entry.get().strip(),
                               password=self.password_entry.get().strip())
             if result == 'exist':
-                messagebox.showerror('Register Error', f'National code {self.national_code_entry.get().strip()} is already added')
+                messagebox.showerror('Register Error', f'Your National code "{self.national_code_entry.get().strip()}" is already exists')
             elif result == 'registered':
                 messagebox.showinfo('Successful registration ', f'You have successfully registered !')
             elif result == 'Fill in all the fields':

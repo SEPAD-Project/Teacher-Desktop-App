@@ -2,7 +2,6 @@ import requests
 import threading
 import queue
 import time
-from datetime import datetime
 import os 
 import configparser
 
