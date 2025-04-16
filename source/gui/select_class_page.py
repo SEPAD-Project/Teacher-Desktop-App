@@ -6,8 +6,9 @@ import sys
 import threading
 import time
 
-sys.path.append(str(Path(__file__).resolve().parent.parent.parent / "database-code"))
-from searching import get_class_name
+sys.path.append(str(Path(__file__).resolve().parent))
+
+from backend.searching import get_class_name
 
 class SelectClassPage(CTk):
     def __init__(self, udata):

@@ -6,13 +6,11 @@ from requests import get, exceptions
 from pathlib import Path
 
 # System paths
-BASE_DIR = Path(__file__).resolve().parent.parent
-sys.path.append(str(BASE_DIR.parent / "Login/"))
-sys.path.append(str(BASE_DIR / "backend/"))
+sys.path.append(str(Path(__file__).resolve().parent))
 
 # imports after path configuration
-from login_page_db import check_auth
-from register_back import register_btn_func
+from backend.login_page_db import check_auth
+from backend.register_back import register_btn_func
 
 from select_class_page import select_class_page_func
 

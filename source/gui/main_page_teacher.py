@@ -7,18 +7,13 @@ from ping3 import ping
 from datetime import datetime
 from tkinter import messagebox
 
-parent_dir = Path(__file__).resolve().parent.parent
-sys.path.append(str(parent_dir / "backend"))
+sys.path.append(str(Path(__file__).resolve().parent))
 
-from get_students import get_students_by_class_code
-from get_message import fetch_messages
-from get_active_window import get_active_window_from_server
+from backend.get_students import get_students_by_class_code
+from backend.get_message import fetch_messages
+from backend.get_active_window import get_active_window_from_server
 from window_receiver_gui import creator
-
-parent_dir = Path(__file__).resolve().parent.parent.parent
-sys.path.append(str(parent_dir / "database-code"))
-
-from searching import get_students_name_by_national_code
+from backend.searching import get_students_name_by_national_code
 
 
 class MainPage(CTk):

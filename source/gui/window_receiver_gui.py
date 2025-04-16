@@ -4,8 +4,8 @@ from datetime import datetime
 import sys
 from pathlib import Path
 
-sys.path.append(str(Path(__file__).resolve().parent.parent / "backend"))
-from window_receiver_backend import StudentMonitorBackend
+sys.path.append(str(Path(__file__).resolve().parent))
+from backend.window_receiver_backend import StudentMonitorBackend
 
 
 class CheckStudentScreen(CTk):
