@@ -13,7 +13,7 @@ port = int(config['Server']['student_status_port'])
 server_url = f"http://{ip_address}:{port}"
 
 # getting students message and show them
-def fetch_messages(national_code: str, school_code: str, class_code: str)-> list[bool, str]:
+def fetch_messages(national_code: str, school_code: str, class_code: str):
     """Retrieves messages for a student from specified school and class records.
     
     Fetches student messages by validating their national code, school code, and class name.
