@@ -219,7 +219,9 @@ class MainPage(CTk):
                             print(time)
                             if status :
                                 open_window = 'Not in Class'
-                                if code == '1':
+                                if code == '0':
+                                    final_message = f'Needs updated'
+                                elif code == '1':
                                     final_message = f'Students goes-{time}'
                                 elif code == '2' :
                                     final_message = f'Identity not confirmed-{time}'
