@@ -2,10 +2,8 @@ import sys
 from pathlib import Path
 from typing import Tuple, Union
 
-# Add database-code directory to Python path
-sys.path.append(str(Path(__file__).resolve().parent.parent / "database-code"))
-from searching import get_values_by_username  # type: ignore
-
+sys.path.append(str(Path(__file__).resolve().parent))
+from searching import get_values_by_username  
 
 def check_auth(
     username: str, 

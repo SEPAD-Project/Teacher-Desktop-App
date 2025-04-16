@@ -6,8 +6,7 @@ from requests import get, exceptions
 from pathlib import Path
 
 # System paths
-sys.path.append(str(Path(__file__).resolve().parent))
-
+sys.path.append(str(Path(__file__).resolve().parent.parent))
 # imports after path configuration
 from backend.login_page_db import check_auth
 from backend.register_back import register_btn_func
