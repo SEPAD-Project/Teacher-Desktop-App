@@ -1,4 +1,4 @@
-from customtkinter import CTk, CTkFrame, CTkLabel, CTkEntry, CTkButton, CTkCheckBox, CTkTabview
+from customtkinter import CTk, CTkFrame, CTkLabel, CTkEntry, CTkButton, CTkCheckBox, CTkTabview, CTkOptionMenu
 from threading import Thread
 from tkinter import messagebox
 import sys
@@ -32,8 +32,8 @@ class TeacherSideAppLoginPage(CTk):
 
     def setup_window(self):
         """Configure main window settings"""
-        self.geometry('600x450')
-        self.minsize(600, 450)
+        self.geometry('600x500')
+        self.minsize(600, 500)
         self.title('Teacher Side Login Page')
 
     def create_widgets(self):
@@ -105,6 +105,10 @@ class TeacherSideAppLoginPage(CTk):
                     font=('montserrat', 15, 'bold'), corner_radius=10),
             CTkEntry(master=self.register_element_frame, placeholder_text='password', show="*", width=220, height=38,
                     font=('montserrat', 15, 'bold'), corner_radius=10),
+            CTkLabel(master=self.register_element_frame, text='Lesson', 
+                    font=('montserrat', 20)),
+            CTkOptionMenu(master=self.register_element_frame, 
+                        values=['Math', 'Geo', 'Biology']),
             CTkCheckBox(master=self.register_element_frame, text='I agree to Terms and Conditions',
                        font=('montserrat', 15), corner_radius=20, onvalue='on', offvalue='off'),
             CTkButton(master=self.register_element_frame, text="Register", font=('montserrat', 20, 'bold'),
@@ -121,8 +125,10 @@ class TeacherSideAppLoginPage(CTk):
             (1, 2, {'pady': (20,0), 'sticky': 'e'}),                 # last name
             (3, 1, {'pady': (10,0), 'columnspan': 2}), # national code
             (2, 1, {'pady': (10,0), 'columnspan': 2}), # password
-            (4, 0, {'pady': (10,0), 'columnspan': 3}),                  # terms and conditions
-            (5, 0, {'pady': (10,0), 'columnspan': 3, 'sticky': 'ew'})  # register button
+            (4, 0, {'pady': (10,0), 'padx': (0,40), 'sticky': 'w'}),
+            (4, 1, {'pady': (10,0), 'columnspan': 2, 'sticky': 'wnse'}),
+            (5, 0, {'pady': (10,0), 'columnspan': 3}),                  # terms and conditions
+            (6, 0, {'pady': (10,0), 'columnspan': 3, 'sticky': 'ew'})  # register button
         ]
 
         # Placing elements in the grid
@@ -131,8 +137,8 @@ class TeacherSideAppLoginPage(CTk):
 
         # Assignment to class variables
         (self.register_text, self.name_text, self.password_register_lbl, self.natoinal_code_register_lbl,
-         self.first_name_entry, self.last_name_entry, self.national_code_entry, self.password_entry ,self.checkbox_register, 
-         self.register_btn) = elements_register
+        self.first_name_entry, self.last_name_entry, self.national_code_entry, self.password_entry,self.lesson_text,
+        self.lesson_optionbox, self.checkbox_register, self.register_btn) = elements_register
 
     def handle_register(self):
         self.toggle_register_button(state='disabled')
@@ -141,7 +147,8 @@ class TeacherSideAppLoginPage(CTk):
             result = register_btn_func(first_name=self.first_name_entry.get().strip(),
                               last_name=self.last_name_entry.get().strip(),
                               national_code=self.national_code_entry.get().strip(),
-                              password=self.password_entry.get().strip())
+                              password=self.password_entry.get().strip(),
+                              lesson=self.lesson_optionbox.get().strip())
             if result == 'exist':
                 messagebox.showerror('Register Error', f'Your National code "{self.national_code_entry.get().strip()}" is already exists')
             elif result == 'registered':
