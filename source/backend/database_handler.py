@@ -37,15 +37,20 @@ class DatabaseHandler:
                 cursor.close()
                 conn.close()
 
-    def add_teacher(self, first_name, last_name, national_code, password, classes):
+    def add_teacher(self, first_name, last_name, national_code, password, classes, lesson):
         try:
             conn = self._connect()
             cursor = conn.cursor()
             query = """INSERT INTO teachers 
-                       (teacher_name, teacher_family, teacher_national_code, teacher_password, teacher_classes)
+                       (teacher_name, teacher_family, teacher_national_code, teacher_password, lesson)
                        VALUES (%s, %s, %s, %s, %s)"""
-            data = (first_name, last_name, national_code, password, classes)
-            cursor.execute(query, data)
+            query2 = """INSERT INTO teacher_class 
+                       ()
+                       VALUES (%s, %s, %s, %s, %s, %s)"""
+            data = (first_name, last_name, national_code, password, lesson)
+            print(data)
+            x=cursor.execute(query, data)
+            print(x)
             conn.commit()
             return cursor.rowcount == 1
         except Error as e:

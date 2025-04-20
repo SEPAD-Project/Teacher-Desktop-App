@@ -13,9 +13,9 @@ port = int(config['Database']['DB_port'])
 user = config['Database']['User']
 password = config['Database']['Password']
 
-def register_btn_func(first_name, last_name, national_code, password):
+def register_btn_func(first_name, last_name, national_code, password, lesson):
     # checking that all fields are filled
-    if not all([first_name, last_name, national_code, password]):
+    if not all([first_name, last_name, national_code, password, lesson]):
         return "Fill in all the fields"
 
     # db config
@@ -35,12 +35,12 @@ def register_btn_func(first_name, last_name, national_code, password):
             return "exist"
 
         # adding teacher
-        if db_handler.add_teacher(first_name, last_name, national_code, password, str(classes)):
+        if db_handler.add_teacher(first_name, last_name, national_code, password, str(classes), lesson):
             return "registered"
         return "error"
     
     except Exception as e:
-        return str(e)
+        print(str(e))
     
 
 
