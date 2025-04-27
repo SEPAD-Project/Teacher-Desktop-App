@@ -35,23 +35,32 @@ def get_values_by_username(value, person, host='localhost', user='root', passwor
     elif person == 'teacher' :
         cursor.execute("SELECT COUNT(*) FROM teachers WHERE teacher_national_code = %s", (value,))
         result = cursor.fetchone()
+        teacher_class_codes = []
         if result[0] > 0: # if user exist, return his/her information including password
             cursor.execute('SELECT teacher_name, teacher_family, teacher_password, id FROM teachers WHERE teacher_national_code = %s', (value,))
             result = cursor.fetchone()
-            print(f'this is result : {[f"{i}:{result.index(i)}" for i in result]}')
+            print('result is : {}'.format(result))
+            # print(f'this is result : {[f"{i}:{result.index(i)}" for i in result]}')
             cursor.execute('SELECT class_id FROM teacher_class WHERE teacher_id = %s', (result[3],))
             class_ids = cursor.fetchall()
             class_id_list = [i[0] for i in class_ids]
             for i in class_id_list:
                 cursor.execute('SELECT class_code FROM classes WHERE id = %s', (i,))
                 class_code = cursor.fetchone()
-                print(f"class code index {i} is {class_code}")
+                teacher_class_codes.append(class_code[0])
+                print(f"class code index {i} is {class_code[0]}")
+            for i in result :
+                print(i)
+            final_result = [i for i in result]
+            final_result.append(class_id_list)
+            print(f"this is final result : {final_result}")
             print(class_ids)
             print(class_id_list)
             cursor.close()
             db.close()
+
             if result:
-                return(result)
+                return(final_result)
             else:
                 return(False)
         else:
