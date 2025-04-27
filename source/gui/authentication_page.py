@@ -239,6 +239,7 @@ class TeacherSideAppLoginPage(CTk):
 
     def process_auth_result(self, result):
         """Process authentication result"""
+        print(result)
         success, user_data = result
         
         if success:
