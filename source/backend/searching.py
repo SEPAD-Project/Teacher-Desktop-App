@@ -52,7 +52,7 @@ def get_values_by_username(value, person, host='localhost', user='root', passwor
             for i in result :
                 print(i)
             final_result = [i for i in result]
-            final_result.append(class_id_list)
+            final_result.append(teacher_class_codes)
             print(f"this is final result : {final_result}")
             print(class_ids)
             print(class_id_list)

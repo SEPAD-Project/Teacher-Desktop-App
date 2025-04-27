@@ -14,7 +14,9 @@ class SelectClassPage(CTk):
     def __init__(self, udata):
         super().__init__()
         self.udata = udata
-        print(udata[3])
+        print(f"udata is {udata}")
+        print(type(udata[4]))
+        print(udata[4])
         self.title("Select Class Page")
         self.geometry('650, 550')
         self.minsize(650, 550)
@@ -100,10 +102,9 @@ class SelectClassPage(CTk):
             # Stage 1: Decryption
             self.after(0, self.update_progress, 0.3, "Decryption class data...")
             time.sleep(1)  # Simulate processing
-            print(self.udata[3])
-            print(type(self.udata[3]))
-            if self.udata[3] != '[]':
-                self.list_from_string = ast.literal_eval(self.udata[3])
+            self.udata[4] = str(self.udata[4])
+            if self.udata[4] != '[]':
+                self.list_from_string = ast.literal_eval(self.udata[4])
                 print(1)
                 print(self.list_from_string)
                 self.decrypted_list = [(str(int(code.split('#')[0], 16))+ '-' +(''.join(chr(int(h, 16) ^ ord('crax6ix'[i % len('crax6ix')])) for i, h in enumerate(code.split('#')[1].split('-'))))) for code in self.list_from_string]
@@ -134,6 +135,7 @@ class SelectClassPage(CTk):
                 self.Retrying_button.configure(state=NORMAL,height=30,width=350)
         
         except Exception as e:
+            print(f"Exception occured : {str(e)}")
             self.progress_bar.configure(progress_color="red")
             self.after(0, self.update_progress, 1.0, "CONNECTION ERROR OCCURED : CHECK YOUR INTERNET")
             self.status_label.configure(text="CONNECTION ERROR OCCURED : CHECK YOUR INTERNET", text_color= 'red')
