@@ -9,8 +9,6 @@ class DatabaseHandler:
             'password': password,
             'database': database,
             'port' : port,
-            'connect_timeout': 5,  
-            'read_timeout': 5   
         }
 
     def _connect(self):
