@@ -34,8 +34,14 @@ def get_students_by_class_code(unic_class_code):
         cursor = conn.cursor()
         print(f'class code given in get students is {unic_class_code}')
         # Parameterized query to prevent SQL injection
-        query = "SELECT student_national_code FROM students WHERE class_code = %s"
+        query = "SELECT id FROM classes WHERE class_code = %s"
         cursor.execute(query, (unic_class_code,))
+        class_id = cursor.fetchone()[0]
+        print("this is class id")
+        print(class_id)
+
+        query = "SELECT student_national_code FROM students WHERE class_id = %s"
+        cursor.execute(query, (class_id,))
         
         # Fetch all results as list of tuples
         students = cursor.fetchall()
