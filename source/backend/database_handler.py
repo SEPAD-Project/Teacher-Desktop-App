@@ -58,3 +58,49 @@ class DatabaseHandler:
             if 'conn' in locals() and conn.is_connected():
                 cursor.close()
                 conn.close()
+
+    def get_school_id(self, school_code):
+        try:
+            conn = self._connect()
+            cursor = conn.cursor()
+            query = "SELECT id FROM schools WHERE school_code = %s"
+            cursor.execute(query, (school_code,))
+            x = cursor.fetchall()[0][0]
+            print("cursor result is :")
+            return x
+        except Error as e:
+            if "read timeout" in str(e).lower():
+                raise Exception("Executing timeout")
+            raise Exception(f"DB ERROR : {e}")
+        finally:
+            if 'conn' in locals() and conn.is_connected():
+                cursor.close()
+                conn.close()
+
+    def get_class_id(self, class_name):
+        try:
+            conn = self._connect()
+            cursor = conn.cursor()
+            query = "SELECT id FROM classes WHERE class_name = %s"
+            cursor.execute(query, (class_name,))
+            print(111)
+            return cursor.fetchall()[0][0]
+        
+        except Error as e:
+            if "read timeout" in str(e).lower():
+                raise Exception("Executing timeout")
+            raise Exception(f"DB ERROR : {e}")
+        finally:
+            if 'conn' in locals() and conn.is_connected():
+                cursor.close()
+                conn.close()
+
+if __name__ == "__main__":
+    db = DatabaseHandler(
+            host='185.4.28.110',
+            database='sap',
+            user='root',
+            password='sapprogram2583',
+            port=5000
+        )
+    (db.get_school_id('123'))
