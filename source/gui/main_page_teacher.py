@@ -17,12 +17,14 @@ from backend.searching import get_students_name_by_national_code
 
 
 class MainPage(CTk):
-    def __init__(self, school_code, school_name, class_name, unic_class_code):
+    def __init__(self, school_code, school_name, class_name, unic_class_code, class_numeric_id, school_numeric_id):
         super().__init__()
         self.unic_class_code = unic_class_code
         self.school_code = school_code
         self.school_name = school_name
         self.class_name = class_name
+        self.class_numeric_id=class_numeric_id
+        self.school_numeric_id=school_numeric_id
         print(f'school_code : {school_code}')
         print(f'school_name : {school_name}')
         print(f'class_name : {class_name}')
@@ -200,9 +202,11 @@ class MainPage(CTk):
             if self.students_list[0]:
                 for student in self.students_list[1] :
                     print(f'im going to get message of {student}...')
+                    print(self.school_code)
+                    print(self.class_name)
                     respond = fetch_messages(national_code=student, 
-                                             school_code=self.school_code, 
-                                             class_code=self.class_name)
+                                             school_code=self.school_numeric_id, 
+                                             class_code=self.class_numeric_id)
                     
                     print(f'this is respond : <{respond}>')
                     if respond[0] :
@@ -280,8 +284,8 @@ class MainPage(CTk):
         self.mainloop()
 
 
-def main_page_func_teacher(school_code, school_name, class_name, unic_class_code):
-    app = MainPage(school_code, school_name, class_name, unic_class_code)
+def main_page_func_teacher(school_code, school_name, class_name, unic_class_code, class_numeric_id, school_numeric_id):
+    app = MainPage(school_code, school_name, class_name, unic_class_code, class_numeric_id, school_numeric_id)
     app.run()
 
 

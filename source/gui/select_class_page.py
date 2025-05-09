@@ -6,14 +6,18 @@ import sys
 import threading
 import time
 
-sys.path.append(str(Path(__file__).resolve().parent))
-
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+print("path is ::::::::::")
+print(str(Path(__file__).resolve().parent))
 from backend.searching import get_class_name
+from backend.get_class_school_id import get_class_id, get_school_id
 
 class SelectClassPage(CTk):
     def __init__(self, udata):
         super().__init__()
         self.udata = udata
+        print("udata is :")
+        print(udata)
         print(f"udata is {udata}")
         print(type(udata[4]))
         print(udata[4])
@@ -149,12 +153,16 @@ class SelectClassPage(CTk):
         class_unic_code = self.list_from_string[self.translated_list.index(class_id)]
         school_code = [code for code, name in self.school_name.items() 
                       if name == class_id.split('-')[0]]
+        class_numeric_id = get_class_id(str(class_id.split('-')[1]))
+        school_numeric_id = get_school_id(str(school_code[0]))
         if school_code:
             self.destroy()
             main_page_func_teacher(school_code[0], 
                                   class_id.split('-')[0], 
                                   class_id.split('-')[1],
-                                  class_unic_code)
+                                  class_unic_code,
+                                  class_numeric_id,
+                                  school_numeric_id)
 
     def Retrying_func(self):
         def thread_handler():
