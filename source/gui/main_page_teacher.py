@@ -201,12 +201,12 @@ class MainPage(CTk):
             self.update_entry('UPDATING')
             if self.students_list[0]:
                 for student in self.students_list[1] :
-                    print(f'im going to get message of {student}...')
+                    print(f'im going to get message of {student} from class {self.class_numeric_id} from school {self.school_numeric_id}...')
                     print(self.school_code)
                     print(self.class_name)
-                    respond = fetch_messages(national_code=student, 
-                                             school_code=self.school_numeric_id, 
-                                             class_code=self.class_numeric_id)
+                    respond = fetch_messages(national_code=str(student), 
+                                             school_code=str(self.school_numeric_id), 
+                                             class_code=str(self.class_numeric_id))
                     
                     print(f'this is respond : <{respond}>')
                     if respond[0] :
