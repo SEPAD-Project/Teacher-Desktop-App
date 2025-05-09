@@ -115,8 +115,8 @@ class MainPage(CTk):
                     break
             
             if national_code:
-                creator(self.school_code,
-                        self.class_name,
+                creator(self.school_numeric_id,
+                        self.class_numeric_id,
                         national_code,
                         item_data[0])
             else:
