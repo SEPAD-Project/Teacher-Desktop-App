@@ -120,10 +120,6 @@ class CheckStudentScreen(CTk):
         self.mainloop()
 
 def creator(school_code, class_code, national_code, std_name):
-    print(school_code)
-    print(class_code)
-    print(national_code)
-    print(std_name)
     app = CheckStudentScreen(
         school=school_code,
         class_name=class_code,

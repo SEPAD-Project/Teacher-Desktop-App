@@ -25,9 +25,6 @@ class MainPage(CTk):
         self.class_name = class_name
         self.class_numeric_id=class_numeric_id
         self.school_numeric_id=school_numeric_id
-        print(f'school_code : {school_code}')
-        print(f'school_name : {school_name}')
-        print(f'class_name : {class_name}')
         self.student_rows = {}
         self.students_list = [False, 'NotAssigned']
 
@@ -162,7 +159,6 @@ class MainPage(CTk):
 
     def translate_natoinal_code_to_name(self):
         # national_code : name
-        print(self.students_list[1])
         self.translated_name = {i:get_students_name_by_national_code(i) for i in self.students_list[1]}
         Thread(target=self.set_students_int_table, daemon=True).start()
 
@@ -185,11 +181,7 @@ class MainPage(CTk):
         delta = current_time - given_time
         delta_hours = delta.total_seconds() / 3600 
         delta_min = delta.total_seconds() / 60
-
         
-        print(f"delta  {delta_hours:.1f} hours")
-        
-
         if delta_hours >= 7:
             return [False, "no record found"]
         elif delta_hours < 7:
@@ -202,8 +194,6 @@ class MainPage(CTk):
             if self.students_list[0]:
                 for student in self.students_list[1] :
                     print(f'im going to get message of {student} from class {self.class_numeric_id} from school {self.school_numeric_id}...')
-                    print(self.school_code)
-                    print(self.class_name)
                     respond = fetch_messages(national_code=str(student), 
                                              school_code=str(self.school_numeric_id), 
                                              class_code=str(self.class_numeric_id))
@@ -213,9 +203,6 @@ class MainPage(CTk):
                         if respond[1] != 'No messages yet':
                             code, message_time = str(respond[1]).split('|=|')[0], str(respond[1]).split('|=|')[1] 
                             status, time = self.calculate_time_difference(message_time)
-
-                            print(status)
-                            print(time)
                             if status :
                                 open_window = 'Not in Class'
                                 if code == '0':
@@ -244,11 +231,10 @@ class MainPage(CTk):
                                         if i in str(window_respond) :
                                             open_window = i
                                             break
+                                elif code == 'absent':
+                                    final_message = f'Students goes-{time}'
 
-                                print(f'getting accuracy rate {student} ...')
                                 self.accuracy_data = self.accuracy_dict[student] # list [sum, count, last time]
-                                print(f'last time is {self.accuracy_data[2]}')
-                                print(f'message time is {message_time}')
                                 if self.accuracy_data[2] != message_time:
                                     self.accuracy_data[2] = message_time     # setting new time
                                     self.accuracy_data[1] = int(self.accuracy_data[1]) + 1   # + count
@@ -257,9 +243,6 @@ class MainPage(CTk):
                                     else: # if not looking
                                         pass
                                     self.accuracy_rate = float((self.accuracy_data[0] / self.accuracy_data[1]) * 100).__round__(1)
-                                    print(self.accuracy_rate)
-
-
 
                                 self.table.item(self.student_rows[student], values=(self.translated_name[student], final_message, str(self.accuracy_rate)+'%', open_window))
                         

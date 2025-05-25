@@ -202,8 +202,6 @@ class TeacherSideAppLoginPage(CTk):
         password = self.login_password_entry.get().strip()
         
         if not all([username, password]):
-            print(username)
-            print(password)
             self.show_error("Input Error", "Username and password cannot be empty!")
             self.toggle_login_button()
             return False
@@ -239,7 +237,6 @@ class TeacherSideAppLoginPage(CTk):
 
     def process_auth_result(self, result):
         """Process authentication result"""
-        print(result)
         success, user_data = result
         
         if success:

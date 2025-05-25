@@ -7,8 +7,6 @@ import threading
 import time
 
 sys.path.append(str(Path(__file__).resolve().parent.parent))
-print("path is ::::::::::")
-print(str(Path(__file__).resolve().parent))
 from backend.searching import get_class_name
 from backend.get_class_school_id import get_class_id, get_school_id
 
@@ -16,11 +14,6 @@ class SelectClassPage(CTk):
     def __init__(self, udata):
         super().__init__()
         self.udata = udata
-        print("udata is :")
-        print(udata)
-        print(f"udata is {udata}")
-        print(type(udata[4]))
-        print(udata[4])
         self.title("Select Class Page")
         self.geometry('650, 550')
         self.minsize(650, 550)
@@ -109,18 +102,12 @@ class SelectClassPage(CTk):
             self.udata[4] = str(self.udata[4])
             if self.udata[4] != '[]':
                 self.list_from_string = ast.literal_eval(self.udata[4])
-                print(1)
-                print(self.list_from_string)
                 self.decrypted_list = [(str(int(code.split('#')[0], 16))+ '-' +(''.join(chr(int(h, 16) ^ ord('crax6ix'[i % len('crax6ix')])) for i, h in enumerate(code.split('#')[1].split('-'))))) for code in self.list_from_string]
-                print(5)
-                print(self.decrypted_list)
                 # Stage 2: Translating
                 self.after(0, self.update_progress, 0.6, "Translating class names...")
                 time.sleep(1)  # Simulate processing
                 self.school_name = {i.split('-')[0]:get_class_name(i.split('-')[0]) for i in self.decrypted_list} # code:name
                 self.translated_list = [f"{self.school_name[i.split('-')[0]]}-{i.split('-')[1]}" for i in self.decrypted_list]
-                print(9)
-                print(self.translated_list)
                 # Final stage
                 self.after(0, self.update_progress, 1.0, "Loading completed!")
                 time.sleep(0.5)
