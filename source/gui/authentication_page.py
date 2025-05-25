@@ -13,9 +13,6 @@ from backend.register_back import register_btn_func
 
 from select_class_page import select_class_page_func
 
-
-
-
 class TeacherSideAppLoginPage(CTk):
     def __init__(self):
         super().__init__()
