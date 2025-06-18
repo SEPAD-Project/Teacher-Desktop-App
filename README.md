@@ -1,4 +1,9 @@
-# SEPAD (The Persian acronym for Student Online Monitoring System) - Teacher App
+[![en](https://img.shields.io/badge/lang-en-red.svg)](https://github.com/SEPAD-Project/Teacher-Desktop-App/blob/main/README.md)
+[![fa](https://img.shields.io/badge/lang-fa-blue.svg)](https://github.com/SEPAD-Project/Teacher-Desktop-App/blob/main/README.fa.md)
+# SEPAD (The Persian acronym for Student Online Monitoring System) - Teacher-Desktop-App
+This repository is a part of the SEPAD project and was developed by [Abolfazl Rashidian](https://github.com/abolfazlrashidian) for students to enter the class and send their attention level to the server.
+
+Click [here](https://github.com/SEPAD-Project) to visit the SEPAD organization.
 
 ## Overview
 The Teacher Panel in SEPAD (Student Attention Platform) is a management interface that allows teachers to monitor students' attention levels in real-time during online classes. This panel collects data on their focus (through facial recognition and gaze analysis via webcam) and displays it desktop app.
@@ -14,13 +19,21 @@ Before installation, ensure you meet these requirements:
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/SEPAD-Project/Teacher-App.git
+git clone https://github.com/SEPAD-Project/Teacher-Desktop-App.git
 ```
-2. Navigate to the student-app directory:
+2. Navigate to the Teacher-desktop-app directory:
 ```bash
-cd teacher-app
+cd Teacher-desktop-app
 ```
-3. Install required dependencies:
+3. Create a virtual environment:
+```bash
+python -m venv .venv
+```
+4. Activate the virtual environment:
+```bash
+.venv\Scripts\activate.bat
+```
+5. Install required dependencies:
 ```bash
 pip install -r requirements.txt
 ```
@@ -32,7 +45,7 @@ python source/gui/authentication_page.py
 
 ## Directory Structure
 ```bash
-teacher-app/
+teacher-desktop-app/
 ├── source/
 ├── └──
 ├──── gui/                          # GUI components
@@ -53,4 +66,4 @@ teacher-app/
 
 # 📬 Contact  
 **Email**: SepadOrganizations@gmail.com  
-**Issues**: [GitHub Issues](https://github.com/SEPAD-Project/Teacher-App/issues)  
+**Issues**: [GitHub Issues](https://github.com/SEPAD-Project/Teacher-Desktop-App/issues)  
