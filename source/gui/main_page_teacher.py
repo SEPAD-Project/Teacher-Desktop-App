@@ -261,7 +261,7 @@ class MainPage(CTk):
                 print('an Error occured while getting students list')
             self.update_entry('STOPPED')
         Thread(target=update_data_thread_handler).start()
-        self.after(30000, self.update_data)
+        self.after(10000, self.update_data)
 
     def run(self):
         self.mainloop()
